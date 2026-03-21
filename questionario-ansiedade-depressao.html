@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastreio de Ansiedade e Depressão — DSM-5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --surface2: #f3f2ef;
+    --text: #1a1917;
+    --text-muted: #6b6a67;
+    --text-hint: #9b9a97;
+    --border: rgba(26,25,23,0.11);
+    --border-mid: rgba(26,25,23,0.22);
+    --accent: #1a1917;
+    --green: #3B6D11;
+    --amber: #854F0B;
+    --red: #A32D2D;
+    --teal-bg: #E1F5EE;
+    --teal-text: #085041;
+    --teal-border: #9FE1CB;
+    --blue-bg: #E6F1FB;
+    --blue-text: #042C53;
+    --blue-border: #B5D4F4;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110;
+      --surface: #1c1c1a;
+      --surface2: #252523;
+      --text: #f0ede8;
+      --text-muted: #9b9a97;
+      --text-hint: #6b6a67;
+      --border: rgba(240,237,232,0.1);
+      --border-mid: rgba(240,237,232,0.2);
+      --accent: #f0ede8;
+      --green: #97C459;
+      --amber: #EF9F27;
+      --red: #E24B4A;
+      --teal-bg: #04342C;
+      --teal-text: #9FE1CB;
+      --teal-border: #0F6E56;
+      --blue-bg: #042C53;
+      --blue-text: #B5D4F4;
+      --blue-border: #185FA5;
+    }
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 5rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    text-align: center;
+    margin-bottom: 2.75rem;
+    padding-top: 1rem;
+  }
+  .site-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 10px;
+  }
+  .site-header h1 {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .site-header p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    margin-bottom: 1.5rem;
+    display: none;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-bottom: 7px;
+  }
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2rem 1.5rem;
+    animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-hint);
+    margin-bottom: 1.1rem;
+  }
+  .badge.dep {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    border-color: var(--blue-border);
+  }
+  .badge.anx {
+    background: var(--teal-bg);
+    color: var(--teal-text);
+    border-color: var(--teal-border);
+  }
+
+  /* ── Question ── */
+  .question-text {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.65;
+    margin-bottom: 0.6rem;
+  }
+  .question-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 1.35rem;
+  }
+
+  /* ── Options ── */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 1.5rem;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    background: var(--surface);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    text-align: left;
+    width: 100%;
+    line-height: 1.5;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .option:hover { border-color: var(--border-mid); background: var(--surface2); }
+  .option.selected { border-color: var(--accent); background: var(--surface2); }
+
+  .radio-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-mid);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .option.selected .radio-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .radio-inner {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--bg);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .option.selected .radio-inner { opacity: 1; }
+
+  /* ── Nav ── */
+  .nav { display: flex; gap: 8px; align-items: center; }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-mid);
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    margin-left: auto;
+  }
+  .btn.primary:hover { opacity: 0.83; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ── Intro ── */
+  .intro { text-align: center; padding: 0.25rem 0 1rem; }
+  .intro .lead {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    max-width: 480px;
+    margin: 0 auto 1.5rem;
+  }
+  .pills {
+    display: flex; gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+  .pill {
+    font-size: 12px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+  .pill.dep { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+  .pill.anx { background: var(--teal-bg); color: var(--teal-text); border-color: var(--teal-border); }
+
+  .disclaimer-sm {
+    font-size: 11.5px;
+    color: var(--text-hint);
+    margin-top: 1.25rem;
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  /* ── Result tabs ── */
+  .result-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .tab-panel { display: none; animation: slideUp 0.25s ease; }
+  .tab-panel.show { display: block; }
+
+  /* ── Result content ── */
+  .result-hero {
+    text-align: center;
+    padding: 1.25rem 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+  .result-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 8px;
+  }
+  .result-title {
+    font-family: 'Lora', serif;
+    font-size: 19px;
+    font-weight: 400;
+    margin-bottom: 7px;
+    line-height: 1.4;
+  }
+  .result-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* ── Severity bar ── */
+  .sev-wrap { margin: 1rem 0 1.25rem; }
+  .sev-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+  }
+  .sev-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .sev-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .sev-none .sev-fill  { background: #888780; }
+  .sev-mild .sev-fill  { background: #639922; }
+  .sev-mod .sev-fill   { background: #BA7517; }
+  .sev-sev .sev-fill   { background: #A32D2D; }
+
+  /* ── Criteria grid ── */
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+  }
+  .crit-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 13px;
+  }
+  .crit-name {
+    font-size: 11px;
+    color: var(--text-hint);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .crit-val { font-size: 13px; font-weight: 500; }
+  .c-met  { color: var(--green); }
+  .c-none { color: var(--text-hint); }
+  .c-part { color: var(--amber); }
+
+  /* ── Info box ── */
+  .info-box {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+    margin-bottom: 10px;
+    background: var(--surface);
+  }
+  .info-box-title { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+  .info-box p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ── Disclaimer ── */
+  .disclaimer {
+    font-size: 11.5px;
+    color: var(--text-hint);
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    margin-top: 1.5rem;
+    line-height: 1.7;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .restart-row { display: flex; justify-content: center; margin-top: 1.25rem; }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .card { padding: 1.5rem 1.25rem 1.25rem; }
+    .question-text { font-size: 16px; }
+    .criteria-grid { grid-template-columns: 1fr; }
+    body { padding: 1.5rem 0.75rem 4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="site-header">
+    <p class="eyebrow">Saúde Mental — Rastreio Clínico</p>
+    <h1>Rastreio de Ansiedade e Depressão</h1>
+    <p>Baseado nos critérios diagnósticos do <em>DSM-5</em><br>Perturbação Depressiva Major · Perturbação de Ansiedade Generalizada</p>
+  </header>
+
+  <div class="progress-wrap" id="prog-wrap">
+    <div class="progress-meta">
+      <span id="prog-sec"></span>
+      <span id="prog-ct"></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="app"></div>
+
+</div>
+
+<script>
+const Q = [
+  { id:"gen_duration", sec:"Informação geral", cat:"gen",
+    text:"Há quanto tempo sente os sintomas que vai descrever?",
+    hint:"Considere os sintomas mais persistentes, não episódios pontuais.",
+    opts:["Menos de 2 semanas","Entre 2 semanas e 1 mês","Entre 1 e 6 meses","Mais de 6 meses"], scored:false },
+
+  // ── DEPRESSÃO
+  { id:"dep_mood", sec:"Depressão — Critério A", cat:"dep",
+    text:"Nas últimas 2 semanas, sentiu-se deprimido(a), triste, sem esperança ou vazio(a) na maior parte do dia?",
+    hint:"Este é um dos dois critérios principais — humor deprimido persistente.",
+    opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"] },
+  { id:"dep_anhedonia", sec:"Depressão — Critério A", cat:"dep",
+    text:"Perdeu interesse ou prazer em atividades que habitualmente gostava?",
+    hint:"Anedonia — incapacidade de sentir prazer. É o segundo critério principal.",
+    opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"] },
+  { id:"dep_weight", sec:"Depressão — Critério A", cat:"dep",
+    text:"Houve alterações significativas no seu peso ou apetite (perda ou aumento) sem estar a fazer dieta?",
+    hint:null,
+    opts:["Não","Ligeiras alterações","Alteração moderada (percebo a diferença)","Alteração significativa (mais de 5% do peso num mês)"] },
+  { id:"dep_sleep", sec:"Depressão — Critério A", cat:"dep",
+    text:"Tem dificuldade em dormir (insónia ou dormir demasiado) de forma persistente?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase todos os dias"] },
+  { id:"dep_motor", sec:"Depressão — Critério A", cat:"dep",
+    text:"Sente-se visivelmente mais lento(a) ou agitado(a) do que o habitual — ao ponto de os outros poderem notar?",
+    hint:"Alteração psicomotora observável, não apenas sensação subjetiva.",
+    opts:["Não","Ligeiramente","Moderadamente","Muito claramente"] },
+  { id:"dep_fatigue", sec:"Depressão — Critério A", cat:"dep",
+    text:"Sente-se frequentemente fatigado(a) ou sem energia, mesmo sem esforço físico?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase todos os dias"] },
+  { id:"dep_guilt", sec:"Depressão — Critério A", cat:"dep",
+    text:"Tem sentimentos de inutilidade, culpa excessiva ou inadequação?",
+    hint:"Sentimentos de culpa que vão além de uma autocrítica razoável.",
+    opts:["Não","Ligeiros e ocasionais","Frequentes","Intensos e quase diários"] },
+  { id:"dep_concentration", sec:"Depressão — Critério A", cat:"dep",
+    text:"Tem dificuldade em concentrar-se, tomar decisões ou pensar com clareza?",
+    hint:null,
+    opts:["Não","Ligeira dificuldade","Dificuldade moderada","Dificuldade severa que interfere no dia a dia"] },
+  { id:"dep_death", sec:"Depressão — Critério A", cat:"dep",
+    text:"Teve pensamentos recorrentes sobre a morte, ou pensamentos de se magoar a si próprio(a)?",
+    hint:"Responda com honestidade — não há resposta certa ou errada. Esta informação é importante para a sua saúde.",
+    opts:["Não","Pensamentos vagos e passageiros","Com alguma frequência","Frequentemente ou com planos concretos"] },
+  { id:"dep_impact", sec:"Depressão — Critério B", cat:"dep",
+    text:"Estes sintomas interferem na sua vida profissional, social ou pessoal?",
+    hint:null,
+    opts:["Não interferem","Interferência ligeira","Interferência moderada","Interferência grave em várias áreas"] },
+
+  // ── ANSIEDADE
+  { id:"anx_worry", sec:"Ansiedade — Critério A", cat:"anx",
+    text:"Nas últimas semanas, sentiu-se nervoso(a), ansioso(a) ou com preocupações excessivas e difíceis de controlar?",
+    hint:"A preocupação excessiva e difícil de controlar é o critério central da Perturbação de Ansiedade Generalizada (TAG).",
+    opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"] },
+  { id:"anx_control", sec:"Ansiedade — Critério A", cat:"anx",
+    text:"Quando tem preocupações, consegue controlá-las ou pará-las?",
+    hint:null,
+    opts:["Sim, facilmente","Com algum esforço","Com muita dificuldade","Não consigo controlá-las"] },
+  { id:"anx_restless", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Sente-se frequentemente inquieto(a), tenso(a) ou 'em alerta'?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_fatigue", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Cansa-se facilmente como consequência da ansiedade ou tensão?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_concentration", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"A ansiedade dificulta a sua concentração ou faz-lhe a mente ficar em branco?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_irritability", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Sente-se irritável com mais frequência do que o habitual?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_muscle", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Tem tensão muscular, dores de cabeça tensionais ou outros sintomas físicos de tensão persistente?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_sleep", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Tem dificuldade em adormecer ou em manter o sono por causa de preocupações?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_impact", sec:"Ansiedade — Critério C", cat:"anx",
+    text:"Estes sintomas de ansiedade interferem na sua vida profissional, social ou pessoal?",
+    hint:null,
+    opts:["Não interferem","Interferência ligeira","Interferência moderada","Interferência grave em várias áreas"] },
+  { id:"anx_duration", sec:"Ansiedade — Critério C", cat:"anx",
+    text:"Há quanto tempo tem estas preocupações e sintomas de ansiedade de forma persistente?",
+    hint:"O DSM-5 exige pelo menos 6 meses de sintomas para diagnóstico de TAG.",
+    opts:["Menos de 1 mês","Entre 1 e 3 meses","Entre 3 e 6 meses","Mais de 6 meses"] },
+];
+
+let answers = {};
+let current = -1;
+let activeTab = 'dep';
+
+// ── Scoring
+function depScore() {
+  return ["dep_mood","dep_anhedonia","dep_weight","dep_sleep","dep_motor","dep_fatigue","dep_guilt","dep_concentration","dep_death"]
+    .reduce((s,k) => s + (answers[k] || 0), 0);
+}
+function anxScore() {
+  return ["anx_worry","anx_control","anx_restless","anx_fatigue","anx_concentration","anx_irritability","anx_muscle","anx_sleep"]
+    .reduce((s,k) => s + (answers[k] || 0), 0);
+}
+
+function depSev(s) {
+  if (s <= 2)  return { label:"Sem indicação clínica", cls:"sev-none", pct:4 };
+  if (s <= 8)  return { label:"Leve",                  cls:"sev-mild", pct:28 };
+  if (s <= 16) return { label:"Moderada",              cls:"sev-mod",  pct:62 };
+  return               { label:"Severa",               cls:"sev-sev",  pct:92 };
+}
+function anxSev(s) {
+  if (s <= 4)  return { label:"Sem indicação clínica", cls:"sev-none", pct:4 };
+  if (s <= 9)  return { label:"Leve",                  cls:"sev-mild", pct:28 };
+  if (s <= 14) return { label:"Moderada",              cls:"sev-mod",  pct:62 };
+  return               { label:"Severa",               cls:"sev-sev",  pct:92 };
+}
+
+function depCriteria() {
+  const mainMet = (answers.dep_mood || 0) >= 2 || (answers.dep_anhedonia || 0) >= 2;
+  const count = ["dep_mood","dep_anhedonia","dep_weight","dep_sleep","dep_motor","dep_fatigue","dep_guilt","dep_concentration","dep_death"]
+    .filter(k => (answers[k] || 0) >= 2).length;
+  const impact = (answers.dep_impact || 0) >= 2;
+  return {
+    mainMet, count, impact,
+    fullDSM: mainMet && count >= 5 && impact,
+    partial:  mainMet && count >= 3 && count < 5 && impact
+  };
+}
+function anxCriteria() {
+  const worryMet    = (answers.anx_worry   || 0) >= 2;
+  const controlHard = (answers.anx_control || 0) >= 2;
+  const symCount = ["anx_restless","anx_fatigue","anx_concentration","anx_irritability","anx_muscle","anx_sleep"]
+    .filter(k => (answers[k] || 0) >= 2).length;
+  const impact      = (answers.anx_impact   || 0) >= 2;
+  const longEnough  = (answers.anx_duration || 0) >= 3;
+  return {
+    worryMet, controlHard, symCount, impact, longEnough,
+    fullDSM: worryMet && controlHard && symCount >= 3 && impact && longEnough,
+    partial:  worryMet && symCount >= 2 && impact
+  };
+}
+
+// ── Render
+function render() {
+  const app = document.getElementById('app');
+  const pw  = document.getElementById('prog-wrap');
+  if (current === -1)        { pw.style.display = 'none'; renderIntro(app); }
+  else if (current >= Q.length) { pw.style.display = 'block'; renderResult(app); }
+  else                       { pw.style.display = 'block'; renderQuestion(app); }
+}
+
+function renderIntro(app) {
+  app.innerHTML = `
+  <div class="card">
+    <div style="text-align:center;padding:.25rem 0 .5rem">
+      <p class="lead" style="font-size:14px;color:var(--text-muted);line-height:1.75;max-width:480px;margin:0 auto 1.5rem">
+        Este questionário avalia a presença e severidade de sintomas depressivos e ansiosos,
+        de acordo com os critérios clínicos do <em>DSM-5</em>. Cobre os critérios diagnósticos de
+        ambas as perturbações, com avaliação do grau de severidade.
+      </p>
+      <div class="pills">
+        <span class="pill dep">Depressão Major</span>
+        <span class="pill anx">Ansiedade Generalizada</span>
+        <span class="pill">21 perguntas</span>
+        <span class="pill">~5 minutos</span>
+      </div>
+      <button class="btn primary" onclick="startQuiz()">Iniciar questionário →</button>
+      <p class="disclaimer-sm" style="font-size:11.5px;color:var(--text-hint);margin-top:1.25rem;font-style:italic;line-height:1.65">
+        As suas respostas não são guardadas nem partilhadas.<br>
+        Este questionário não substitui avaliação por profissional de saúde mental.
+      </p>
+    </div>
+  </div>`;
+}
+
+function renderQuestion(app) {
+  const q   = Q[current];
+  const sel = answers[q.id] !== undefined ? answers[q.id] : -1;
+  const pct = (current / Q.length * 100).toFixed(0);
+
+  document.getElementById('prog-sec').textContent  = q.sec;
+  document.getElementById('prog-ct').textContent   = (current + 1) + ' / ' + Q.length;
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  const badgeCls = q.cat === 'anx' ? 'anx' : q.cat === 'dep' ? 'dep' : '';
+  const badgeTxt = q.cat === 'anx' ? 'Ansiedade' : q.cat === 'dep' ? 'Depressão' : 'Geral';
+
+  app.innerHTML = `
+  <div class="card">
+    <span class="badge ${badgeCls}">${badgeTxt}</span>
+    <p class="question-text">${q.text}</p>
+    ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
+    <div class="options">
+      ${q.opts.map((o, i) => `
+        <button class="option ${sel === i ? 'selected' : ''}" onclick="selectOption(${i})">
+          <div class="radio-dot"><div class="radio-inner"></div></div>
+          <span>${o}</span>
+        </button>`).join('')}
+    </div>
+    <div class="nav">
+      ${current > 0 ? `<button class="btn" onclick="goBack()">← Anterior</button>` : ''}
+      <button class="btn primary" onclick="goNext()" ${sel === -1 ? 'disabled' : ''}>
+        ${current === Q.length - 1 ? 'Ver resultado →' : 'Seguinte →'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderResult(app) {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-sec').textContent  = 'Resultado';
+  document.getElementById('prog-ct').textContent   = 'Concluído';
+
+  const ds   = depScore(),  as   = anxScore();
+  const dsev = depSev(ds),  asev = anxSev(as);
+  const dc   = depCriteria(), ac = anxCriteria();
+
+  function depPanel() {
+    const res = dc.fullDSM
+      ? { title:"Perfil consistente com Depressão Major",         sub:"As suas respostas são consistentes com os critérios do DSM-5 para Perturbação Depressiva Major." }
+      : dc.partial
+      ? { title:"Sintomas depressivos clinicamente relevantes",   sub:"Existem sintomas significativos mas os critérios completos para Depressão Major não foram totalmente atingidos." }
+      : { title:"Sem indicação de Depressão Major",               sub:"As suas respostas não sugerem a presença de critérios clínicos para Perturbação Depressiva Major." };
+
+    return `
+    <div class="result-hero">
+      <p class="result-eyebrow">Depressão Major — DSM-5</p>
+      <p class="result-title">${res.title}</p>
+      <p class="result-sub">${res.sub}</p>
+    </div>
+    <div class="sev-wrap ${dsev.cls}">
+      <div class="sev-meta"><span>Severidade estimada</span><span>${dsev.label}</span></div>
+      <div class="sev-track"><div class="sev-fill" style="width:${dsev.pct}%"></div></div>
+    </div>
+    <div class="criteria-grid">
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Humor deprimido</div>
+        <div class="crit-val ${(answers.dep_mood||0)>=2?'c-met':'c-none'}">${(answers.dep_mood||0)>=2?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Anedonia</div>
+        <div class="crit-val ${(answers.dep_anhedonia||0)>=2?'c-met':'c-none'}">${(answers.dep_anhedonia||0)>=2?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Nº sintomas (mín. 5 para diagnóstico)</div>
+        <div class="crit-val ${dc.count>=5?'c-met':dc.count>=3?'c-part':'c-none'}">${dc.count} de 9 sintomas</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério B — Impacto funcional</div>
+        <div class="crit-val ${dc.impact?'c-met':'c-none'}">${dc.impact?'Presente':'Não atingido'}</div>
+      </div>
+    </div>
+    ${dc.fullDSM || dc.partial ? `
+    <div class="info-box">
+      <div class="info-box-title">Recomendação</div>
+      <p>Recomenda-se consulta com psicólogo clínico ou psiquiatra para avaliação completa. A Depressão Major tem tratamentos eficazes — psicoterapia (TCC, ACT), farmacoterapia (antidepressivos) ou combinação de ambas.</p>
+    </div>` : `
+    <div class="info-box">
+      <div class="info-box-title">Nota</div>
+      <p>Mesmo sem critérios clínicos de Depressão Major, se sentir tristeza persistente ou perda de prazer que o(a) afete, pode ser útil falar com um profissional de saúde mental.</p>
+    </div>`}`;
+  }
+
+  function anxPanel() {
+    const res = ac.fullDSM
+      ? { title:"Perfil consistente com Ansiedade Generalizada",       sub:"As suas respostas são consistentes com os critérios do DSM-5 para Perturbação de Ansiedade Generalizada (TAG)." }
+      : ac.partial
+      ? { title:"Sintomas de ansiedade clinicamente relevantes",        sub:"Existem sintomas ansiosos significativos, mas os critérios completos para TAG não foram totalmente atingidos." }
+      : { title:"Sem indicação de Ansiedade Generalizada",              sub:"As suas respostas não sugerem a presença de critérios clínicos para Perturbação de Ansiedade Generalizada." };
+
+    return `
+    <div class="result-hero">
+      <p class="result-eyebrow">Ansiedade Generalizada — DSM-5</p>
+      <p class="result-title">${res.title}</p>
+      <p class="result-sub">${res.sub}</p>
+    </div>
+    <div class="sev-wrap ${asev.cls}">
+      <div class="sev-meta"><span>Severidade estimada</span><span>${asev.label}</span></div>
+      <div class="sev-track"><div class="sev-fill" style="width:${asev.pct}%"></div></div>
+    </div>
+    <div class="criteria-grid">
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Preocupação excessiva</div>
+        <div class="crit-val ${ac.worryMet?'c-met':'c-none'}">${ac.worryMet?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Difícil de controlar</div>
+        <div class="crit-val ${ac.controlHard?'c-met':'c-none'}">${ac.controlHard?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Sintomas B (mín. 3 para diagnóstico)</div>
+        <div class="crit-val ${ac.symCount>=3?'c-met':ac.symCount>=2?'c-part':'c-none'}">${ac.symCount} de 6 sintomas</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério C — Duração ≥ 6 meses</div>
+        <div class="crit-val ${ac.longEnough?'c-met':'c-part'}">${ac.longEnough?'Cumprido':'Não cumprido ainda'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério D — Impacto funcional</div>
+        <div class="crit-val ${ac.impact?'c-met':'c-none'}">${ac.impact?'Presente':'Não atingido'}</div>
+      </div>
+    </div>
+    ${ac.fullDSM || ac.partial ? `
+    <div class="info-box">
+      <div class="info-box-title">Recomendação</div>
+      <p>Recomenda-se consulta com psicólogo clínico ou psiquiatra. A TAG responde bem à terapia cognitivo-comportamental (TCC), técnicas de regulação emocional e, quando indicado, à farmacoterapia (SSRIs, SNRIs).</p>
+    </div>` : `
+    <div class="info-box">
+      <div class="info-box-title">Nota</div>
+      <p>Mesmo sem critérios de TAG, se a ansiedade limitar a sua vida de alguma forma, pode ser útil falar com um profissional de saúde mental.</p>
+    </div>`}`;
+  }
+
+  app.innerHTML = `
+  <div class="card">
+    <div class="result-tabs">
+      <button class="tab-btn ${activeTab==='dep'?'active':''}" onclick="switchTab('dep')">Depressão</button>
+      <button class="tab-btn ${activeTab==='anx'?'active':''}" onclick="switchTab('anx')">Ansiedade</button>
+    </div>
+    <div id="tab-dep" class="tab-panel ${activeTab==='dep'?'show':''}">${depPanel()}</div>
+    <div id="tab-anx" class="tab-panel ${activeTab==='anx'?'show':''}">${anxPanel()}</div>
+    <div class="restart-row">
+      <button class="btn" onclick="restart()">← Repetir questionário</button>
+    </div>
+    <p class="disclaimer">
+      Este questionário tem fins informativos e de rastreio. Não constitui um diagnóstico clínico.
+      Apenas um profissional de saúde mental qualificado pode estabelecer um diagnóstico formal.
+      Se estiver em sofrimento, procure ajuda profissional.
+    </p>
+  </div>`;
+}
+
+// ── Controls
+function switchTab(t) { activeTab = t; renderResult(document.getElementById('app')); }
+function startQuiz()  { current = 0; render(); }
+function goBack()     { if (current > 0) { current--; render(); } }
+function selectOption(i) { answers[Q[current].id] = i; render(); }
+function goNext() {
+  if (answers[Q[current].id] === undefined) return;
+  current++;
+  render();
+}
+function restart() { answers = {}; current = -1; render(); }
+
+render();
+</script>
+</body>
+</html>
