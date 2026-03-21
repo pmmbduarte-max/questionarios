@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastreio de POC — Pedro Duarte, Psicólogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #faf9f7; --surface: #ffffff; --surface2: #f3f2ef;
+    --text: #1a1917; --text-muted: #6b6a67; --text-hint: #9b9a97;
+    --border: rgba(26,25,23,0.12); --border-mid: rgba(26,25,23,0.22);
+    --accent: #1a1917; --green: #3B6D11; --amber: #854F0B;
+    --purple-bg: #EEEDFE; --purple-text: #26215C; --purple-border: #AFA9EC;
+    --radius: 10px; --radius-lg: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110; --surface: #1c1c1a; --surface2: #252523;
+      --text: #f0ede8; --text-muted: #9b9a97; --text-hint: #6b6a67;
+      --border: rgba(240,237,232,0.1); --border-mid: rgba(240,237,232,0.2);
+      --accent: #f0ede8; --green: #97C459; --amber: #EF9F27;
+      --purple-bg: #26215C; --purple-text: #CECBF6; --purple-border: #534AB7;
+    }
+  }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem 4rem; }
+  .container { width: 100%; max-width: 640px; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-hint); text-decoration: none; margin-bottom: 1.5rem; transition: color 0.15s; }
+  .back-link:hover { color: var(--text-muted); }
+  .site-header { text-align: center; margin-bottom: 3rem; padding-top: 0.5rem; }
+  .site-header .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 10px; }
+  .site-header h1 { font-family: 'Lora', serif; font-size: 26px; font-weight: 400; line-height: 1.3; margin-bottom: 8px; color: var(--text); }
+  .site-header p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-hint); margin-bottom: 8px; }
+  .progress-track { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem 1.75rem 1.5rem; animation: up 0.3s ease; }
+  @keyframes up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .section-tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-hint); background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; margin-bottom: 1.25rem; }
+  .question-text { font-family: 'Lora', serif; font-size: 17px; font-weight: 400; line-height: 1.65; color: var(--text); margin-bottom: 0.75rem; }
+  .question-hint { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; font-style: italic; }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.75rem; }
+  .option { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; background: var(--surface); transition: border-color 0.15s, background 0.15s; text-align: left; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); line-height: 1.5; }
+  .option:hover { border-color: var(--border-mid); background: var(--surface2); }
+  .option.selected { border-color: var(--accent); background: var(--surface2); }
+  .radio-dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border-mid); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s, background 0.15s; }
+  .option.selected .radio-dot { border-color: var(--accent); background: var(--accent); }
+  .radio-inner { width: 6px; height: 6px; border-radius: 50%; background: var(--bg); opacity: 0; transition: opacity 0.15s; }
+  .option.selected .radio-inner { opacity: 1; }
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 10px 20px; border-radius: var(--radius); border: 1px solid var(--border-mid); background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: background 0.15s, transform 0.1s; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { background: var(--surface2); }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); margin-left: auto; }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .intro { text-align: center; padding: .5rem 0 1rem; }
+  .intro p { font-size: 13.5px; color: var(--text-muted); line-height: 1.75; max-width: 480px; margin: 0 auto 1.25rem; }
+  .intro-list { text-align: left; font-size: 13px; color: var(--text-muted); list-style: none; margin-bottom: 1.5rem; display: inline-block; }
+  .intro-list li { padding: 4px 0; }
+  .intro-list li::before { content: "— "; color: var(--text-hint); }
+  .res-hero { text-align: center; padding: 1.5rem 1rem 1.75rem; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
+  .res-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 8px; }
+  .res-title { font-family: 'Lora', serif; font-size: 20px; font-weight: 400; margin-bottom: 6px; line-height: 1.4; }
+  .res-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 420px; margin: 0 auto; }
+  .crit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.25rem; }
+  .crit-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 14px; }
+  .crit-name { font-size: 11px; color: var(--text-hint); margin-bottom: 3px; line-height: 1.4; }
+  .crit-status { font-size: 13px; font-weight: 500; }
+  .c-met { color: var(--green); } .c-none { color: var(--text-hint); } .c-part { color: var(--amber); }
+  .info-box { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; background: var(--surface); }
+  .info-box-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .info-box p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .disclaimer { font-size: 11.5px; color: var(--text-hint); border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1.5rem; line-height: 1.65; font-style: italic; text-align: center; }
+  .restart-row { display: flex; justify-content: center; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+  @media (max-width: 480px) { .card { padding: 1.25rem 1rem 1rem; } .crit-grid { grid-template-columns: 1fr; } body { padding: 1.5rem 0.75rem 3rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="index.html">← Voltar aos questionários</a>
+
+  <header class="site-header">
+    <p class="eyebrow">Pedro Duarte · Psicólogo · Rastreio Clínico</p>
+    <h1>Rastreio de Perturbação Obsessivo-Compulsiva</h1>
+    <p>Baseado nos critérios diagnósticos do <em>DSM-5</em> para a Perturbação Obsessivo-Compulsiva</p>
+  </header>
+
+  <div id="prog-wrap" class="progress-wrap" style="display:none">
+    <div class="progress-meta"><span id="prog-sec"></span><span id="prog-ct"></span></div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script>
+const questions = [
+  {id:"obs_thoughts",section:"Critério A — Obsessões",text:"Tem pensamentos, impulsos ou imagens mentais que surgem repetidamente, de forma intrusiva e indesejada?",hint:"Por exemplo: medo de contaminação, dúvidas persistentes, imagens perturbadoras, impulso de fazer mal a alguém.",options:["Nunca ou raramente","Às vezes, mas não me perturbam muito","Frequentemente e causam ansiedade ou desconforto significativo","Quase sempre e são muito perturbadores"],key:"obs_thoughts"},
+  {id:"obs_anxiety",section:"Critério A — Obsessões",text:"Esses pensamentos ou imagens causam marcada ansiedade, angústia ou mal-estar?",hint:"Avalie a intensidade do sofrimento que esses pensamentos provocam.",options:["Não tenho esse tipo de pensamentos","Causam leve desconforto","Causam ansiedade significativa","Causam angústia intensa"],key:"obs_anxiety"},
+  {id:"obs_suppress",section:"Critério A — Obsessões",text:"Tenta ignorar, suprimir ou neutralizar esses pensamentos, ou afastá-los com outro pensamento ou ação?",hint:"Por exemplo: rezar, contar, substituir por um pensamento neutro.",options:["Não se aplica","Raramente tento controlá-los","Frequentemente tento suprimi-los","Sinto que tenho de os neutralizar constantemente"],key:"obs_suppress"},
+  {id:"comp_behaviors",section:"Critério A — Compulsões",text:"Sente-se compelido a repetir comportamentos ou rituais em resposta a uma obsessão ou regra rígida que sente ter de seguir?",hint:"Por exemplo: lavar as mãos, verificar, ordenar, contar, rezar, repetir palavras em silêncio.",options:["Nunca","Às vezes, mas consigo resistir facilmente","Frequentemente, com dificuldade em resistir","Quase sempre, sinto que não consigo parar"],key:"comp_behaviors"},
+  {id:"comp_reduce",section:"Critério A — Compulsões",text:"Esses rituais visam reduzir a ansiedade ou prevenir algo temido, mesmo que não estejam ligados de forma realista ao que teme?",hint:"Por exemplo: lavar as mãos 20 vezes para evitar contaminação, mesmo sabendo que é excessivo.",options:["Não faço rituais desse tipo","Faço, mas acho que fazem sentido e são proporcionais","Faço e reconheço que são excessivos, mas ajudam momentaneamente","Faço e sei que são irracionais, mas sinto-me incapaz de parar"],key:"comp_reduce"},
+  {id:"time",section:"Critério B — Tempo e impacto",text:"Quanto tempo por dia ocupa com estes pensamentos, rituais ou comportamentos?",hint:"Inclua o tempo que passa a tentar resistir ou a recuperar do desconforto.",options:["Menos de 1 hora por dia","Entre 1 a 3 horas por dia","Mais de 3 horas por dia","Ocupam a maior parte do meu dia"],key:"time"},
+  {id:"distress",section:"Critério B — Sofrimento e funcionamento",text:"Estes pensamentos ou rituais interferem na sua vida profissional, social ou pessoal, ou causam sofrimento significativo?",hint:"Pense em situações que evita, relações afetadas, trabalho prejudicado ou perda de tempo significativa.",options:["Não interferem na minha vida","Causam algum incómodo mas não interferem de forma significativa","Interferem moderadamente (evito situações, perco tempo, tenho conflitos)","Interferem severamente, prejudicando várias áreas da minha vida"],key:"distress"},
+  {id:"substances",section:"Critério C — Exclusão de causas orgânicas",text:"Os pensamentos e comportamentos que descreveu surgiram ou pioraram significativamente após o uso de substâncias (drogas, medicamentos) ou uma condição médica?",hint:null,options:["Sim, tenho certeza de que é essa a causa","Pode ter influenciado, mas o problema existia antes","Não, nunca relacionei com substâncias ou doença física","Não sei"],key:"substances"},
+  {id:"insight",section:"Especificador — Grau de consciência",text:"Quando tem os pensamentos ou faz os rituais, consegue reconhecer que podem ser excessivos ou desproporcionais?",hint:"O DSM-5 especifica três níveis de insight: bom/razoável, pobre, ou ausente.",options:["Reconheço claramente que são excessivos","Às vezes reconheço, outras não tenho tanta certeza","Raramente acho que são excessivos — parecem-me necessários","Tenho a certeza de que são absolutamente necessários"],key:"insight"},
+];
+
+let answers={},currentQ=-1;
+
+function getScores(){
+  const a=answers;
+  const obsPresent=(a.obs_thoughts>=2)&&(a.obs_anxiety>=2);
+  const compPresent=(a.comp_behaviors>=2)&&(a.comp_reduce>=1);
+  const timeHigh=a.time>=1;
+  const distressHigh=a.distress>=2;
+  const criterionB=timeHigh||distressHigh;
+  const noSubstances=a.substances!==0;
+  const insightScore=a.insight||0;
+  const insightLabel=insightScore<=1?"Bom / Razoável":insightScore===2?"Pobre":"Ausente (tipo delirante)";
+  return{obsPresent,compPresent,timeHigh,distressHigh,criterionB,noSubstances,insightLabel,insightScore};
+}
+
+function getResult(sc){
+  const critA=sc.obsPresent||sc.compPresent;
+  if(!critA)return{title:"Critérios de POC não identificados",subtitle:"As suas respostas não sugerem a presença de obsessões ou compulsões com intensidade clínica significativa.",detail:"Não foram identificados critérios suficientes para o Critério A do DSM-5. Pode existir algum desconforto ocasional, mas sem o perfil clínico de Perturbação Obsessivo-Compulsiva.",level:"low"};
+  if(critA&&sc.criterionB&&sc.noSubstances)return{title:"Perfil consistente com critérios de POC",subtitle:"As suas respostas são consistentes com os critérios diagnósticos do DSM-5 para Perturbação Obsessivo-Compulsiva.",detail:"Foram identificadas obsessões e/ou compulsões (Critério A), com impacto significativo em tempo ou funcionamento (Critério B), e sem evidência de causa por substâncias ou condição médica (Critério C).",level:"high"};
+  return{title:"Critérios parcialmente presentes",subtitle:"Existem algumas características obsessivo-compulsivas, mas os critérios completos do DSM-5 não foram totalmente verificados.",detail:"O Critério A está presente (obsessões ou compulsões), mas o impacto no funcionamento ou tempo pode estar abaixo do limiar clínico, ou há incerteza sobre causas alternativas.",level:"medium"};
+}
+
+function render(){
+  const app=document.getElementById('app');
+  if(currentQ===-1)renderIntro(app);
+  else if(currentQ>=questions.length)renderResult(app);
+  else renderQuestion(app);
+}
+
+function renderIntro(app){
+  app.innerHTML=`<div class="card"><div class="intro"><p>Este questionário avalia a presença de pensamentos obsessivos e comportamentos compulsivos de acordo com os critérios clínicos do <em>DSM-5</em>.</p><ul class="intro-list"><li>9 perguntas organizadas por critério diagnóstico</li><li>Resultado com análise detalhada por critério</li><li>Não substitui avaliação por profissional de saúde mental</li><li>As suas respostas não são guardadas</li></ul><button class="btn primary" onclick="startQuiz()">Iniciar questionário →</button></div></div>`;
+}
+
+function renderQuestion(app){
+  const q=questions[currentQ];
+  const sel=answers[q.key]!==undefined?answers[q.key]:-1;
+  const progress=(currentQ/questions.length*100).toFixed(0);
+  document.getElementById('prog-wrap').style.display='block';
+  document.getElementById('prog-sec').textContent=q.section;
+  document.getElementById('prog-ct').textContent=(currentQ+1)+' / '+questions.length;
+  document.getElementById('prog-fill').style.width=progress+'%';
+  app.innerHTML=`<div class="card"><span class="section-tag">${q.section}</span><p class="question-text">${q.text}</p>${q.hint?`<p class="question-hint">${q.hint}</p>`:''}<div class="options">${q.options.map((opt,i)=>`<button class="option ${sel===i?'selected':''}" onclick="selectOption(${i})"><div class="radio-dot"><div class="radio-inner"></div></div><span>${opt}</span></button>`).join('')}</div><div class="nav">${currentQ>0?`<button class="btn" onclick="goBack()">← Anterior</button>`:''}<button class="btn primary" onclick="goNext()" ${sel===-1?'disabled':''}>${currentQ===questions.length-1?'Ver resultado →':'Seguinte →'}</button></div></div>`;
+}
+
+function renderResult(app){
+  const sc=getScores();
+  const res=getResult(sc);
+  const crit=[
+    {name:"Critério A — Obsessões",status:sc.obsPresent?"Presente":"Não identificado",cls:sc.obsPresent?"c-met":"c-none"},
+    {name:"Critério A — Compulsões",status:sc.compPresent?"Presente":"Não identificado",cls:sc.compPresent?"c-met":"c-none"},
+    {name:"Critério B — Tempo (>1h/dia)",status:sc.timeHigh?"Presente":"Não atingido",cls:sc.timeHigh?"c-met":"c-none"},
+    {name:"Critério B — Impacto funcional",status:sc.distressHigh?"Presente":"Não atingido",cls:sc.distressHigh?"c-met":"c-none"},
+    {name:"Critério C — Causa orgânica",status:sc.noSubstances?"Sem evidência de causa orgânica":"Possível causa alternativa",cls:sc.noSubstances?"c-met":"c-part"},
+    {name:"Nível de insight",status:sc.insightLabel,cls:sc.insightScore<=1?"c-met":sc.insightScore===2?"c-part":"c-none"},
+  ];
+  app.innerHTML=`<div class="card"><div class="res-hero"><div class="res-label">Avaliação com base no DSM-5</div><div class="res-title">${res.title}</div><div class="res-sub">${res.subtitle}</div></div><div class="crit-grid">${crit.map(c=>`<div class="crit-card"><div class="crit-name">${c.name}</div><div class="crit-status ${c.cls}">${c.status}</div></div>`).join('')}</div><div class="info-box"><div class="info-box-title">Interpretação</div><p>${res.detail}</p></div>${res.level!=='low'?`<div class="info-box"><div class="info-box-title">Próximos passos recomendados</div><p>Recomenda-se uma consulta com um psicólogo clínico ou psiquiatra. A POC é tratável — a terapia cognitivo-comportamental com Exposição e Prevenção de Resposta (EPR) e/ou medicação (SSRIs) são eficazes.</p></div>`:`<div class="info-box"><div class="info-box-title">Nota</div><p>Mesmo sem critérios de POC identificados, se sentir que pensamentos ou comportamentos repetitivos lhe causam sofrimento, pode ser útil falar com um profissional.</p></div>`}<div class="restart-row"><button class="btn" onclick="restart()">← Repetir</button><a href="index.html" class="btn">Ver outros questionários</a></div><p class="disclaimer">Este questionário tem fins informativos e de rastreio. Não constitui um diagnóstico clínico. Apenas um profissional de saúde mental qualificado pode estabelecer um diagnóstico formal.</p></div>`;
+}
+
+function startQuiz(){currentQ=0;render();}
+function goBack(){if(currentQ>0){currentQ--;render();}}
+function selectOption(i){answers[questions[currentQ].key]=i;render();}
+function goNext(){if(answers[questions[currentQ].key]===undefined)return;currentQ++;render();}
+function restart(){answers={};currentQ=-1;document.getElementById('prog-wrap').style.display='none';render();}
+
+render();
+</script>
+</body>
+</html>
