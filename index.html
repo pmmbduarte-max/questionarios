@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Questionário de Rastreio POC — DSM-5</title>
+<title>Rastreio de Ansiedade e Depressão — DSM-5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -17,11 +17,18 @@
     --text: #1a1917;
     --text-muted: #6b6a67;
     --text-hint: #9b9a97;
-    --border: rgba(26,25,23,0.12);
+    --border: rgba(26,25,23,0.11);
     --border-mid: rgba(26,25,23,0.22);
     --accent: #1a1917;
     --green: #3B6D11;
     --amber: #854F0B;
+    --red: #A32D2D;
+    --teal-bg: #E1F5EE;
+    --teal-text: #085041;
+    --teal-border: #9FE1CB;
+    --blue-bg: #E6F1FB;
+    --blue-text: #042C53;
+    --blue-border: #B5D4F4;
     --radius: 10px;
     --radius-lg: 14px;
   }
@@ -39,6 +46,13 @@
       --accent: #f0ede8;
       --green: #97C459;
       --amber: #EF9F27;
+      --red: #E24B4A;
+      --teal-bg: #04342C;
+      --teal-text: #9FE1CB;
+      --teal-border: #0F6E56;
+      --blue-bg: #042C53;
+      --blue-text: #B5D4F4;
+      --blue-border: #185FA5;
     }
   }
 
@@ -50,9 +64,9 @@
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2rem 1rem 4rem;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 5rem;
   }
 
   .container {
@@ -63,10 +77,9 @@
   /* ── Header ── */
   .site-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2.75rem;
     padding-top: 1rem;
   }
-
   .site-header .eyebrow {
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -74,16 +87,13 @@
     color: var(--text-hint);
     margin-bottom: 10px;
   }
-
   .site-header h1 {
     font-family: 'Lora', serif;
     font-size: 26px;
     font-weight: 400;
     line-height: 1.3;
     margin-bottom: 8px;
-    color: var(--text);
   }
-
   .site-header p {
     font-size: 14px;
     color: var(--text-muted);
@@ -92,24 +102,22 @@
 
   /* ── Progress ── */
   .progress-wrap {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    display: none;
   }
-
   .progress-meta {
     display: flex;
     justify-content: space-between;
     font-size: 12px;
     color: var(--text-hint);
-    margin-bottom: 8px;
+    margin-bottom: 7px;
   }
-
   .progress-track {
     height: 2px;
     background: var(--border);
     border-radius: 2px;
     overflow: hidden;
   }
-
   .progress-fill {
     height: 100%;
     background: var(--accent);
@@ -125,115 +133,102 @@
     padding: 2rem 2rem 1.5rem;
     animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1);
   }
-
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .section-tag {
-    display: inline-flex;
-    align-items: center;
-    font-size: 11px;
+  /* ── Badge ── */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-hint);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
     padding: 3px 10px;
-    margin-bottom: 1.25rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-hint);
+    margin-bottom: 1.1rem;
+  }
+  .badge.dep {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+    border-color: var(--blue-border);
+  }
+  .badge.anx {
+    background: var(--teal-bg);
+    color: var(--teal-text);
+    border-color: var(--teal-border);
   }
 
+  /* ── Question ── */
   .question-text {
     font-family: 'Lora', serif;
     font-size: 18px;
     font-weight: 400;
     line-height: 1.65;
-    color: var(--text);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
   }
-
   .question-hint {
     font-size: 13px;
     color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
     font-style: italic;
-    padding-left: 1px;
+    line-height: 1.6;
+    margin-bottom: 1.35rem;
   }
 
   /* ── Options ── */
   .options {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 1.75rem;
+    gap: 7px;
+    margin-bottom: 1.5rem;
   }
-
   .option {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 13px 16px;
+    padding: 12px 15px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     cursor: pointer;
     background: var(--surface);
-    transition: border-color 0.15s, background 0.15s;
-    text-align: left;
-    width: 100%;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     color: var(--text);
+    text-align: left;
+    width: 100%;
     line-height: 1.5;
+    transition: border-color 0.15s, background 0.15s;
   }
-
-  .option:hover {
-    border-color: var(--border-mid);
-    background: var(--surface2);
-  }
-
-  .option.selected {
-    border-color: var(--accent);
-    background: var(--surface2);
-  }
+  .option:hover { border-color: var(--border-mid); background: var(--surface2); }
+  .option.selected { border-color: var(--accent); background: var(--surface2); }
 
   .radio-dot {
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     border-radius: 50%;
     border: 1.5px solid var(--border-mid);
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.15s, background 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
   }
-
   .option.selected .radio-dot {
     border-color: var(--accent);
     background: var(--accent);
   }
-
   .radio-inner {
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--bg);
     opacity: 0;
     transition: opacity 0.15s;
   }
-
   .option.selected .radio-inner { opacity: 1; }
 
   /* ── Nav ── */
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .nav { display: flex; gap: 8px; align-items: center; }
 
   .btn {
     padding: 10px 20px;
@@ -246,82 +241,100 @@
     cursor: pointer;
     transition: background 0.15s, transform 0.1s;
   }
-
   .btn:hover { background: var(--surface2); }
   .btn:active { transform: scale(0.97); }
-
-  .btn-primary {
+  .btn.primary {
     background: var(--accent);
     color: var(--bg);
     border-color: var(--accent);
     margin-left: auto;
   }
-
-  .btn-primary:hover { opacity: 0.85; background: var(--accent); }
+  .btn.primary:hover { opacity: 0.83; }
   .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   /* ── Intro ── */
-  .intro {
-    text-align: center;
-    padding: 0.5rem 0 1.5rem;
-  }
-
-  .intro p {
+  .intro { text-align: center; padding: 0.25rem 0 1rem; }
+  .intro .lead {
     font-size: 14px;
     color: var(--text-muted);
     line-height: 1.75;
     max-width: 480px;
     margin: 0 auto 1.5rem;
   }
-
-  .intro-features {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 0 auto 2rem;
-    max-width: 360px;
-    text-align: left;
+  .pills {
+    display: flex; gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
   }
-
-  .intro-features li {
-    list-style: none;
-    font-size: 13px;
+  .pill {
+    font-size: 12px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
     color: var(--text-muted);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
   }
+  .pill.dep { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
+  .pill.anx { background: var(--teal-bg); color: var(--teal-text); border-color: var(--teal-border); }
 
-  .intro-features li::before {
-    content: "—";
+  .disclaimer-sm {
+    font-size: 11.5px;
     color: var(--text-hint);
-    flex-shrink: 0;
+    margin-top: 1.25rem;
+    line-height: 1.65;
+    font-style: italic;
   }
 
-  /* ── Result ── */
+  /* ── Result tabs ── */
+  .result-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .tab-panel { display: none; animation: slideUp 0.25s ease; }
+  .tab-panel.show { display: block; }
+
+  /* ── Result content ── */
   .result-hero {
     text-align: center;
-    padding: 1.5rem 1rem 1.75rem;
+    padding: 1.25rem 1rem 1.5rem;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
-
-  .result-label {
+  .result-eyebrow {
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-hint);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-
   .result-title {
     font-family: 'Lora', serif;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 400;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     line-height: 1.4;
   }
-
   .result-sub {
     font-size: 13px;
     color: var(--text-muted);
@@ -330,57 +343,68 @@
     margin: 0 auto;
   }
 
+  /* ── Severity bar ── */
+  .sev-wrap { margin: 1rem 0 1.25rem; }
+  .sev-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+  }
+  .sev-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .sev-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .sev-none .sev-fill  { background: #888780; }
+  .sev-mild .sev-fill  { background: #639922; }
+  .sev-mod .sev-fill   { background: #BA7517; }
+  .sev-sev .sev-fill   { background: #A32D2D; }
+
+  /* ── Criteria grid ── */
   .criteria-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 1.25rem;
   }
-
-  .crit-item {
+  .crit-card {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 11px 14px;
+    padding: 10px 13px;
   }
-
-  .crit-label {
+  .crit-name {
     font-size: 11px;
     color: var(--text-hint);
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     line-height: 1.4;
   }
+  .crit-val { font-size: 13px; font-weight: 500; }
+  .c-met  { color: var(--green); }
+  .c-none { color: var(--text-hint); }
+  .c-part { color: var(--amber); }
 
-  .crit-value {
-    font-size: 13px;
-    font-weight: 500;
-  }
-
-  .status-met    { color: var(--green); }
-  .status-none   { color: var(--text-hint); }
-  .status-partial{ color: var(--amber); }
-
-  .info-section {
+  /* ── Info box ── */
+  .info-box {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 14px 16px;
+    padding: 13px 15px;
     margin-bottom: 10px;
     background: var(--surface);
   }
+  .info-box-title { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+  .info-box p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
 
-  .info-section-title {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--text);
-  }
-
-  .info-section p {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.7;
-  }
-
+  /* ── Disclaimer ── */
   .disclaimer {
     font-size: 11.5px;
     color: var(--text-hint);
@@ -392,250 +416,385 @@
     text-align: center;
   }
 
-  .restart-row {
-    margin-top: 1.25rem;
-    display: flex;
-    justify-content: center;
-  }
+  .restart-row { display: flex; justify-content: center; margin-top: 1.25rem; }
 
   /* ── Responsive ── */
-  @media (max-width: 480px) {
+  @media (max-width: 500px) {
     .card { padding: 1.5rem 1.25rem 1.25rem; }
     .question-text { font-size: 16px; }
     .criteria-grid { grid-template-columns: 1fr; }
-    body { padding: 1.5rem 0.75rem 3rem; }
+    body { padding: 1.5rem 0.75rem 4rem; }
   }
 </style>
 </head>
 <body>
 <div class="container">
+
   <header class="site-header">
     <p class="eyebrow">Saúde Mental — Rastreio Clínico</p>
-    <h1>Questionário de Rastreio POC</h1>
-    <p>Baseado nos critérios diagnósticos do <em>DSM-5</em><br>para a Perturbação Obsessivo-Compulsiva</p>
+    <h1>Rastreio de Ansiedade e Depressão</h1>
+    <p>Baseado nos critérios diagnósticos do <em>DSM-5</em><br>Perturbação Depressiva Major · Perturbação de Ansiedade Generalizada</p>
   </header>
 
-  <div id="progress-wrap" class="progress-wrap" style="display:none">
+  <div class="progress-wrap" id="prog-wrap">
     <div class="progress-meta">
-      <span id="section-label"></span>
-      <span id="q-counter"></span>
+      <span id="prog-sec"></span>
+      <span id="prog-ct"></span>
     </div>
     <div class="progress-track">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
     </div>
   </div>
 
   <div id="app"></div>
+
 </div>
 
 <script>
-const questions = [
-  {
-    id:"obs_thoughts", section:"Critério A — Obsessões",
-    text:"Tem pensamentos, impulsos ou imagens mentais que surgem repetidamente, de forma intrusiva e indesejada?",
-    hint:"Por exemplo: medo de contaminação, dúvidas persistentes, imagens perturbadoras, impulso de fazer mal a alguém.",
-    options:["Nunca ou raramente","Às vezes, mas não me perturbam muito","Frequentemente e causam ansiedade ou desconforto significativo","Quase sempre e são muito perturbadores"]
-  },
-  {
-    id:"obs_anxiety", section:"Critério A — Obsessões",
-    text:"Esses pensamentos ou imagens causam marcada ansiedade, angústia ou mal-estar?",
-    hint:"Avalie a intensidade do sofrimento que esses pensamentos provocam.",
-    options:["Não tenho esse tipo de pensamentos","Causam leve desconforto","Causam ansiedade significativa","Causam angústia intensa"]
-  },
-  {
-    id:"obs_suppress", section:"Critério A — Obsessões",
-    text:"Tenta ignorar, suprimir ou neutralizar esses pensamentos, ou afastá-los com outro pensamento ou ação?",
-    hint:"Por exemplo: rezar, contar, substituir por um pensamento neutro.",
-    options:["Não se aplica","Raramente tento controlá-los","Frequentemente tento suprimi-los","Sinto que tenho de os neutralizar constantemente"]
-  },
-  {
-    id:"comp_behaviors", section:"Critério A — Compulsões",
-    text:"Sente-se compelido a repetir comportamentos ou rituais em resposta a uma obsessão ou regra rígida que sente ter de seguir?",
-    hint:"Por exemplo: lavar as mãos, verificar, ordenar, contar, rezar, repetir palavras em silêncio.",
-    options:["Nunca","Às vezes, mas consigo resistir facilmente","Frequentemente, com dificuldade em resistir","Quase sempre, sinto que não consigo parar"]
-  },
-  {
-    id:"comp_reduce", section:"Critério A — Compulsões",
-    text:"Esses rituais visam reduzir a ansiedade ou prevenir algo temido, mesmo que não estejam ligados de forma realista ao que teme?",
-    hint:"Por exemplo: lavar as mãos 20 vezes para evitar contaminação, mesmo sabendo que é excessivo.",
-    options:["Não faço rituais desse tipo","Faço, mas acho que fazem sentido e são proporcionais","Faço e reconheço que são excessivos, mas ajudam momentaneamente","Faço e sei que são irracionais, mas sinto-me incapaz de parar"]
-  },
-  {
-    id:"time", section:"Critério B — Tempo e impacto",
-    text:"Quanto tempo por dia ocupa com estes pensamentos, rituais ou comportamentos?",
-    hint:"Inclua o tempo que passa a tentar resistir ou a recuperar do desconforto.",
-    options:["Menos de 1 hora por dia","Entre 1 a 3 horas por dia","Mais de 3 horas por dia","Ocupam a maior parte do meu dia"]
-  },
-  {
-    id:"distress", section:"Critério B — Sofrimento e funcionamento",
-    text:"Estes pensamentos ou rituais interferem na sua vida profissional, social ou pessoal, ou causam sofrimento significativo?",
-    hint:"Pense em situações que evita, relações afetadas, trabalho prejudicado ou perda de tempo significativa.",
-    options:["Não interferem na minha vida","Causam algum incómodo mas não interferem de forma significativa","Interferem moderadamente (evito situações, perco tempo, tenho conflitos)","Interferem severamente, prejudicando várias áreas da minha vida"]
-  },
-  {
-    id:"substances", section:"Critério C — Exclusão de causas orgânicas",
-    text:"Os pensamentos e comportamentos que descreveu surgiram ou pioraram significativamente após o uso de substâncias (drogas, medicamentos) ou uma condição médica?",
+const Q = [
+  { id:"gen_duration", sec:"Informação geral", cat:"gen",
+    text:"Há quanto tempo sente os sintomas que vai descrever?",
+    hint:"Considere os sintomas mais persistentes, não episódios pontuais.",
+    opts:["Menos de 2 semanas","Entre 2 semanas e 1 mês","Entre 1 e 6 meses","Mais de 6 meses"], scored:false },
+
+  // ── DEPRESSÃO
+  { id:"dep_mood", sec:"Depressão — Critério A", cat:"dep",
+    text:"Nas últimas 2 semanas, sentiu-se deprimido(a), triste, sem esperança ou vazio(a) na maior parte do dia?",
+    hint:"Este é um dos dois critérios principais — humor deprimido persistente.",
+    opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"] },
+  { id:"dep_anhedonia", sec:"Depressão — Critério A", cat:"dep",
+    text:"Perdeu interesse ou prazer em atividades que habitualmente gostava?",
+    hint:"Anedonia — incapacidade de sentir prazer. É o segundo critério principal.",
+    opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"] },
+  { id:"dep_weight", sec:"Depressão — Critério A", cat:"dep",
+    text:"Houve alterações significativas no seu peso ou apetite (perda ou aumento) sem estar a fazer dieta?",
     hint:null,
-    options:["Sim, tenho certeza de que é essa a causa","Pode ter influenciado, mas o problema existia antes","Não, nunca relacionei com substâncias ou doença física","Não sei"]
-  },
-  {
-    id:"insight", section:"Especificador — Grau de consciência",
-    text:"Quando tem os pensamentos ou faz os rituais, consegue reconhecer que podem ser excessivos ou desproporcionais?",
-    hint:"O DSM-5 especifica três níveis de insight: bom/razoável, pobre, ou ausente.",
-    options:["Reconheço claramente que são excessivos","Às vezes reconheço, outras não tenho tanta certeza","Raramente acho que são excessivos — parecem-me necessários","Tenho a certeza de que são absolutamente necessários"]
-  }
+    opts:["Não","Ligeiras alterações","Alteração moderada (percebo a diferença)","Alteração significativa (mais de 5% do peso num mês)"] },
+  { id:"dep_sleep", sec:"Depressão — Critério A", cat:"dep",
+    text:"Tem dificuldade em dormir (insónia ou dormir demasiado) de forma persistente?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase todos os dias"] },
+  { id:"dep_motor", sec:"Depressão — Critério A", cat:"dep",
+    text:"Sente-se visivelmente mais lento(a) ou agitado(a) do que o habitual — ao ponto de os outros poderem notar?",
+    hint:"Alteração psicomotora observável, não apenas sensação subjetiva.",
+    opts:["Não","Ligeiramente","Moderadamente","Muito claramente"] },
+  { id:"dep_fatigue", sec:"Depressão — Critério A", cat:"dep",
+    text:"Sente-se frequentemente fatigado(a) ou sem energia, mesmo sem esforço físico?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase todos os dias"] },
+  { id:"dep_guilt", sec:"Depressão — Critério A", cat:"dep",
+    text:"Tem sentimentos de inutilidade, culpa excessiva ou inadequação?",
+    hint:"Sentimentos de culpa que vão além de uma autocrítica razoável.",
+    opts:["Não","Ligeiros e ocasionais","Frequentes","Intensos e quase diários"] },
+  { id:"dep_concentration", sec:"Depressão — Critério A", cat:"dep",
+    text:"Tem dificuldade em concentrar-se, tomar decisões ou pensar com clareza?",
+    hint:null,
+    opts:["Não","Ligeira dificuldade","Dificuldade moderada","Dificuldade severa que interfere no dia a dia"] },
+  { id:"dep_death", sec:"Depressão — Critério A", cat:"dep",
+    text:"Teve pensamentos recorrentes sobre a morte, ou pensamentos de se magoar a si próprio(a)?",
+    hint:"Responda com honestidade — não há resposta certa ou errada. Esta informação é importante para a sua saúde.",
+    opts:["Não","Pensamentos vagos e passageiros","Com alguma frequência","Frequentemente ou com planos concretos"] },
+  { id:"dep_impact", sec:"Depressão — Critério B", cat:"dep",
+    text:"Estes sintomas interferem na sua vida profissional, social ou pessoal?",
+    hint:null,
+    opts:["Não interferem","Interferência ligeira","Interferência moderada","Interferência grave em várias áreas"] },
+
+  // ── ANSIEDADE
+  { id:"anx_worry", sec:"Ansiedade — Critério A", cat:"anx",
+    text:"Nas últimas semanas, sentiu-se nervoso(a), ansioso(a) ou com preocupações excessivas e difíceis de controlar?",
+    hint:"A preocupação excessiva e difícil de controlar é o critério central da Perturbação de Ansiedade Generalizada (TAG).",
+    opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"] },
+  { id:"anx_control", sec:"Ansiedade — Critério A", cat:"anx",
+    text:"Quando tem preocupações, consegue controlá-las ou pará-las?",
+    hint:null,
+    opts:["Sim, facilmente","Com algum esforço","Com muita dificuldade","Não consigo controlá-las"] },
+  { id:"anx_restless", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Sente-se frequentemente inquieto(a), tenso(a) ou 'em alerta'?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_fatigue", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Cansa-se facilmente como consequência da ansiedade ou tensão?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_concentration", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"A ansiedade dificulta a sua concentração ou faz-lhe a mente ficar em branco?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_irritability", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Sente-se irritável com mais frequência do que o habitual?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_muscle", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Tem tensão muscular, dores de cabeça tensionais ou outros sintomas físicos de tensão persistente?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_sleep", sec:"Ansiedade — Critério B", cat:"anx",
+    text:"Tem dificuldade em adormecer ou em manter o sono por causa de preocupações?",
+    hint:null,
+    opts:["Não","Raramente","Frequentemente","Quase sempre"] },
+  { id:"anx_impact", sec:"Ansiedade — Critério C", cat:"anx",
+    text:"Estes sintomas de ansiedade interferem na sua vida profissional, social ou pessoal?",
+    hint:null,
+    opts:["Não interferem","Interferência ligeira","Interferência moderada","Interferência grave em várias áreas"] },
+  { id:"anx_duration", sec:"Ansiedade — Critério C", cat:"anx",
+    text:"Há quanto tempo tem estas preocupações e sintomas de ansiedade de forma persistente?",
+    hint:"O DSM-5 exige pelo menos 6 meses de sintomas para diagnóstico de TAG.",
+    opts:["Menos de 1 mês","Entre 1 e 3 meses","Entre 3 e 6 meses","Mais de 6 meses"] },
 ];
 
 let answers = {};
 let current = -1;
+let activeTab = 'dep';
 
-function getScores() {
-  const a = answers;
-  const obsPresent  = (a.obs_thoughts >= 2) && (a.obs_anxiety >= 2);
-  const compPresent = (a.comp_behaviors >= 2) && (a.comp_reduce >= 1);
-  const timeHigh    = a.time >= 1;
-  const distressHigh= a.distress >= 2;
-  const criterionB  = timeHigh || distressHigh;
-  const noSubstances= a.substances !== 0;
-  const insightScore= a.insight || 0;
-  const insightLabel= insightScore <= 1 ? "Bom / Razoável" : insightScore === 2 ? "Pobre" : "Ausente (tipo delirante)";
-  return { obsPresent, compPresent, timeHigh, distressHigh, criterionB, noSubstances, insightLabel, insightScore };
+// ── Scoring
+function depScore() {
+  return ["dep_mood","dep_anhedonia","dep_weight","dep_sleep","dep_motor","dep_fatigue","dep_guilt","dep_concentration","dep_death"]
+    .reduce((s,k) => s + (answers[k] || 0), 0);
+}
+function anxScore() {
+  return ["anx_worry","anx_control","anx_restless","anx_fatigue","anx_concentration","anx_irritability","anx_muscle","anx_sleep"]
+    .reduce((s,k) => s + (answers[k] || 0), 0);
 }
 
-function getResult(sc) {
-  const critA = sc.obsPresent || sc.compPresent;
-  if (!critA) return {
-    title:"Critérios de POC não identificados",
-    sub:"As suas respostas não sugerem a presença de obsessões ou compulsões com intensidade clínica significativa.",
-    detail:"Não foram identificados critérios suficientes para o Critério A do DSM-5. Pode existir algum desconforto ocasional, mas sem o perfil clínico de Perturbação Obsessivo-Compulsiva.",
-    level:"low"
-  };
-  if (critA && sc.criterionB && sc.noSubstances) return {
-    title:"Perfil consistente com critérios de POC",
-    sub:"As suas respostas são consistentes com os critérios diagnósticos do DSM-5 para Perturbação Obsessivo-Compulsiva.",
-    detail:"Foram identificadas obsessões e/ou compulsões (Critério A), com impacto significativo em tempo ou funcionamento (Critério B), e sem evidência de causa por substâncias ou condição médica (Critério C).",
-    level:"high"
-  };
+function depSev(s) {
+  if (s <= 2)  return { label:"Sem indicação clínica", cls:"sev-none", pct:4 };
+  if (s <= 8)  return { label:"Leve",                  cls:"sev-mild", pct:28 };
+  if (s <= 16) return { label:"Moderada",              cls:"sev-mod",  pct:62 };
+  return               { label:"Severa",               cls:"sev-sev",  pct:92 };
+}
+function anxSev(s) {
+  if (s <= 4)  return { label:"Sem indicação clínica", cls:"sev-none", pct:4 };
+  if (s <= 9)  return { label:"Leve",                  cls:"sev-mild", pct:28 };
+  if (s <= 14) return { label:"Moderada",              cls:"sev-mod",  pct:62 };
+  return               { label:"Severa",               cls:"sev-sev",  pct:92 };
+}
+
+function depCriteria() {
+  const mainMet = (answers.dep_mood || 0) >= 2 || (answers.dep_anhedonia || 0) >= 2;
+  const count = ["dep_mood","dep_anhedonia","dep_weight","dep_sleep","dep_motor","dep_fatigue","dep_guilt","dep_concentration","dep_death"]
+    .filter(k => (answers[k] || 0) >= 2).length;
+  const impact = (answers.dep_impact || 0) >= 2;
   return {
-    title:"Critérios parcialmente presentes",
-    sub:"Existem algumas características obsessivo-compulsivas, mas os critérios completos do DSM-5 não foram totalmente verificados.",
-    detail:"O Critério A está presente (obsessões ou compulsões), mas o impacto no funcionamento ou tempo pode estar abaixo do limiar clínico, ou há incerteza sobre causas alternativas.",
-    level:"medium"
+    mainMet, count, impact,
+    fullDSM: mainMet && count >= 5 && impact,
+    partial:  mainMet && count >= 3 && count < 5 && impact
+  };
+}
+function anxCriteria() {
+  const worryMet    = (answers.anx_worry   || 0) >= 2;
+  const controlHard = (answers.anx_control || 0) >= 2;
+  const symCount = ["anx_restless","anx_fatigue","anx_concentration","anx_irritability","anx_muscle","anx_sleep"]
+    .filter(k => (answers[k] || 0) >= 2).length;
+  const impact      = (answers.anx_impact   || 0) >= 2;
+  const longEnough  = (answers.anx_duration || 0) >= 3;
+  return {
+    worryMet, controlHard, symCount, impact, longEnough,
+    fullDSM: worryMet && controlHard && symCount >= 3 && impact && longEnough,
+    partial:  worryMet && symCount >= 2 && impact
   };
 }
 
+// ── Render
 function render() {
-  const pw = document.getElementById('progress-wrap');
-  if (current === -1) { pw.style.display='none'; renderIntro(); }
-  else if (current >= questions.length) { pw.style.display='none'; renderResult(); }
-  else { pw.style.display='block'; renderQuestion(); }
+  const app = document.getElementById('app');
+  const pw  = document.getElementById('prog-wrap');
+  if (current === -1)        { pw.style.display = 'none'; renderIntro(app); }
+  else if (current >= Q.length) { pw.style.display = 'block'; renderResult(app); }
+  else                       { pw.style.display = 'block'; renderQuestion(app); }
 }
 
-function renderIntro() {
-  document.getElementById('app').innerHTML = `
-    <div class="card">
-      <div class="intro">
-        <p>Este questionário avalia a presença de pensamentos obsessivos e comportamentos compulsivos de acordo com os critérios clínicos do <em>DSM-5</em> (Manual de Diagnóstico e Estatística das Perturbações Mentais, 5.ª edição).</p>
-        <ul class="intro-features">
-          <li>9 perguntas organizadas por critério diagnóstico</li>
-          <li>Resultado com análise detalhada por critério</li>
-          <li>Não substitui avaliação por profissional de saúde mental</li>
-          <li>As suas respostas não são guardadas nem partilhadas</li>
-        </ul>
-        <button class="btn btn-primary" onclick="start()">Iniciar questionário →</button>
+function renderIntro(app) {
+  app.innerHTML = `
+  <div class="card">
+    <div style="text-align:center;padding:.25rem 0 .5rem">
+      <p class="lead" style="font-size:14px;color:var(--text-muted);line-height:1.75;max-width:480px;margin:0 auto 1.5rem">
+        Este questionário avalia a presença e severidade de sintomas depressivos e ansiosos,
+        de acordo com os critérios clínicos do <em>DSM-5</em>. Cobre os critérios diagnósticos de
+        ambas as perturbações, com avaliação do grau de severidade.
+      </p>
+      <div class="pills">
+        <span class="pill dep">Depressão Major</span>
+        <span class="pill anx">Ansiedade Generalizada</span>
+        <span class="pill">21 perguntas</span>
+        <span class="pill">~5 minutos</span>
       </div>
-    </div>`;
+      <button class="btn primary" onclick="startQuiz()">Iniciar questionário →</button>
+      <p class="disclaimer-sm" style="font-size:11.5px;color:var(--text-hint);margin-top:1.25rem;font-style:italic;line-height:1.65">
+        As suas respostas não são guardadas nem partilhadas.<br>
+        Este questionário não substitui avaliação por profissional de saúde mental.
+      </p>
+    </div>
+  </div>`;
 }
 
-function renderQuestion() {
-  const q = questions[current];
+function renderQuestion(app) {
+  const q   = Q[current];
   const sel = answers[q.id] !== undefined ? answers[q.id] : -1;
-  const pct = (current / questions.length * 100).toFixed(1);
+  const pct = (current / Q.length * 100).toFixed(0);
 
-  document.getElementById('section-label').textContent = q.section;
-  document.getElementById('q-counter').textContent = `${current + 1} / ${questions.length}`;
-  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('prog-sec').textContent  = q.sec;
+  document.getElementById('prog-ct').textContent   = (current + 1) + ' / ' + Q.length;
+  document.getElementById('prog-fill').style.width = pct + '%';
 
-  document.getElementById('app').innerHTML = `
-    <div class="card">
-      <span class="section-tag">${q.section}</span>
-      <p class="question-text">${q.text}</p>
-      ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
-      <div class="options">
-        ${q.options.map((opt,i)=>`
-          <button class="option ${sel===i?'selected':''}" onclick="select(${i})">
-            <div class="radio-dot"><div class="radio-inner"></div></div>
-            <span>${opt}</span>
-          </button>`).join('')}
-      </div>
-      <div class="nav">
-        ${current > 0 ? `<button class="btn" onclick="back()">← Anterior</button>` : ''}
-        <button class="btn btn-primary" onclick="next()" ${sel===-1?'disabled':''}>
-          ${current===questions.length-1 ? 'Ver resultado →' : 'Seguinte →'}
-        </button>
-      </div>
-    </div>`;
+  const badgeCls = q.cat === 'anx' ? 'anx' : q.cat === 'dep' ? 'dep' : '';
+  const badgeTxt = q.cat === 'anx' ? 'Ansiedade' : q.cat === 'dep' ? 'Depressão' : 'Geral';
+
+  app.innerHTML = `
+  <div class="card">
+    <span class="badge ${badgeCls}">${badgeTxt}</span>
+    <p class="question-text">${q.text}</p>
+    ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
+    <div class="options">
+      ${q.opts.map((o, i) => `
+        <button class="option ${sel === i ? 'selected' : ''}" onclick="selectOption(${i})">
+          <div class="radio-dot"><div class="radio-inner"></div></div>
+          <span>${o}</span>
+        </button>`).join('')}
+    </div>
+    <div class="nav">
+      ${current > 0 ? `<button class="btn" onclick="goBack()">← Anterior</button>` : ''}
+      <button class="btn primary" onclick="goNext()" ${sel === -1 ? 'disabled' : ''}>
+        ${current === Q.length - 1 ? 'Ver resultado →' : 'Seguinte →'}
+      </button>
+    </div>
+  </div>`;
 }
 
-function renderResult() {
-  const sc = getScores();
-  const res = getResult(sc);
+function renderResult(app) {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-sec').textContent  = 'Resultado';
+  document.getElementById('prog-ct').textContent   = 'Concluído';
 
-  const criteria = [
-    { label:"Critério A — Obsessões",       val: sc.obsPresent  ? "Presente"                    : "Não identificado",          cls: sc.obsPresent  ? "met" : "none" },
-    { label:"Critério A — Compulsões",      val: sc.compPresent ? "Presente"                    : "Não identificado",          cls: sc.compPresent ? "met" : "none" },
-    { label:"Critério B — Tempo (>1h/dia)", val: sc.timeHigh    ? "Presente"                    : "Não atingido",              cls: sc.timeHigh    ? "met" : "none" },
-    { label:"Critério B — Impacto funcional",val:sc.distressHigh? "Presente"                    : "Não atingido",              cls: sc.distressHigh? "met" : "none" },
-    { label:"Critério C — Causa orgânica",  val: sc.noSubstances? "Sem evidência de causa orgânica" : "Possível causa alternativa", cls: sc.noSubstances? "met":"partial"},
-    { label:"Nível de insight",             val: sc.insightLabel,                                cls: sc.insightScore<=1?"met":sc.insightScore===2?"partial":"none" },
-  ];
+  const ds   = depScore(),  as   = anxScore();
+  const dsev = depSev(ds),  asev = anxSev(as);
+  const dc   = depCriteria(), ac = anxCriteria();
 
-  document.getElementById('progress-fill').style.width = '100%';
+  function depPanel() {
+    const res = dc.fullDSM
+      ? { title:"Perfil consistente com Depressão Major",         sub:"As suas respostas são consistentes com os critérios do DSM-5 para Perturbação Depressiva Major." }
+      : dc.partial
+      ? { title:"Sintomas depressivos clinicamente relevantes",   sub:"Existem sintomas significativos mas os critérios completos para Depressão Major não foram totalmente atingidos." }
+      : { title:"Sem indicação de Depressão Major",               sub:"As suas respostas não sugerem a presença de critérios clínicos para Perturbação Depressiva Major." };
 
-  document.getElementById('app').innerHTML = `
-    <div class="card">
-      <div class="result-hero">
-        <p class="result-label">Avaliação com base no DSM-5</p>
-        <h2 class="result-title">${res.title}</h2>
-        <p class="result-sub">${res.sub}</p>
+    return `
+    <div class="result-hero">
+      <p class="result-eyebrow">Depressão Major — DSM-5</p>
+      <p class="result-title">${res.title}</p>
+      <p class="result-sub">${res.sub}</p>
+    </div>
+    <div class="sev-wrap ${dsev.cls}">
+      <div class="sev-meta"><span>Severidade estimada</span><span>${dsev.label}</span></div>
+      <div class="sev-track"><div class="sev-fill" style="width:${dsev.pct}%"></div></div>
+    </div>
+    <div class="criteria-grid">
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Humor deprimido</div>
+        <div class="crit-val ${(answers.dep_mood||0)>=2?'c-met':'c-none'}">${(answers.dep_mood||0)>=2?'Presente':'Não identificado'}</div>
       </div>
-
-      <div class="criteria-grid">
-        ${criteria.map(c=>`
-          <div class="crit-item">
-            <div class="crit-label">${c.label}</div>
-            <div class="crit-value status-${c.cls}">${c.val}</div>
-          </div>`).join('')}
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Anedonia</div>
+        <div class="crit-val ${(answers.dep_anhedonia||0)>=2?'c-met':'c-none'}">${(answers.dep_anhedonia||0)>=2?'Presente':'Não identificado'}</div>
       </div>
-
-      <div class="info-section">
-        <div class="info-section-title">Interpretação</div>
-        <p>${res.detail}</p>
+      <div class="crit-card">
+        <div class="crit-name">Nº sintomas (mín. 5 para diagnóstico)</div>
+        <div class="crit-val ${dc.count>=5?'c-met':dc.count>=3?'c-part':'c-none'}">${dc.count} de 9 sintomas</div>
       </div>
-
-      ${res.level !== 'low' ? `
-      <div class="info-section">
-        <div class="info-section-title">Próximos passos recomendados</div>
-        <p>Recomenda-se uma consulta com um psicólogo clínico ou psiquiatra para avaliação completa. A POC é uma perturbação tratável — a terapia cognitivo-comportamental com Exposição e Prevenção de Resposta (EPR) e/ou medicação (SSRIs) são abordagens com eficácia comprovada.</p>
-      </div>` : `
-      <div class="info-section">
-        <div class="info-section-title">Nota</div>
-        <p>Mesmo sem critérios de POC identificados, se sentir que pensamentos ou comportamentos repetitivos lhe causam sofrimento, pode ser útil falar com um profissional de saúde mental.</p>
-      </div>`}
-
-      <div class="restart-row">
-        <button class="btn" onclick="restart()">← Repetir questionário</button>
+      <div class="crit-card">
+        <div class="crit-name">Critério B — Impacto funcional</div>
+        <div class="crit-val ${dc.impact?'c-met':'c-none'}">${dc.impact?'Presente':'Não atingido'}</div>
       </div>
+    </div>
+    ${dc.fullDSM || dc.partial ? `
+    <div class="info-box">
+      <div class="info-box-title">Recomendação</div>
+      <p>Recomenda-se consulta com psicólogo clínico ou psiquiatra para avaliação completa. A Depressão Major tem tratamentos eficazes — psicoterapia (TCC, ACT), farmacoterapia (antidepressivos) ou combinação de ambas.</p>
+    </div>` : `
+    <div class="info-box">
+      <div class="info-box-title">Nota</div>
+      <p>Mesmo sem critérios clínicos de Depressão Major, se sentir tristeza persistente ou perda de prazer que o(a) afete, pode ser útil falar com um profissional de saúde mental.</p>
+    </div>`}`;
+  }
 
-      <p class="disclaimer">Este questionário tem fins informativos e de rastreio. Não constitui um diagnóstico clínico. Apenas um profissional de saúde mental qualificado pode estabelecer um diagnóstico formal. Se estiver em sofrimento, procure ajuda profissional.</p>
-    </div>`;
+  function anxPanel() {
+    const res = ac.fullDSM
+      ? { title:"Perfil consistente com Ansiedade Generalizada",       sub:"As suas respostas são consistentes com os critérios do DSM-5 para Perturbação de Ansiedade Generalizada (TAG)." }
+      : ac.partial
+      ? { title:"Sintomas de ansiedade clinicamente relevantes",        sub:"Existem sintomas ansiosos significativos, mas os critérios completos para TAG não foram totalmente atingidos." }
+      : { title:"Sem indicação de Ansiedade Generalizada",              sub:"As suas respostas não sugerem a presença de critérios clínicos para Perturbação de Ansiedade Generalizada." };
+
+    return `
+    <div class="result-hero">
+      <p class="result-eyebrow">Ansiedade Generalizada — DSM-5</p>
+      <p class="result-title">${res.title}</p>
+      <p class="result-sub">${res.sub}</p>
+    </div>
+    <div class="sev-wrap ${asev.cls}">
+      <div class="sev-meta"><span>Severidade estimada</span><span>${asev.label}</span></div>
+      <div class="sev-track"><div class="sev-fill" style="width:${asev.pct}%"></div></div>
+    </div>
+    <div class="criteria-grid">
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Preocupação excessiva</div>
+        <div class="crit-val ${ac.worryMet?'c-met':'c-none'}">${ac.worryMet?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Difícil de controlar</div>
+        <div class="crit-val ${ac.controlHard?'c-met':'c-none'}">${ac.controlHard?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Sintomas B (mín. 3 para diagnóstico)</div>
+        <div class="crit-val ${ac.symCount>=3?'c-met':ac.symCount>=2?'c-part':'c-none'}">${ac.symCount} de 6 sintomas</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério C — Duração ≥ 6 meses</div>
+        <div class="crit-val ${ac.longEnough?'c-met':'c-part'}">${ac.longEnough?'Cumprido':'Não cumprido ainda'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério D — Impacto funcional</div>
+        <div class="crit-val ${ac.impact?'c-met':'c-none'}">${ac.impact?'Presente':'Não atingido'}</div>
+      </div>
+    </div>
+    ${ac.fullDSM || ac.partial ? `
+    <div class="info-box">
+      <div class="info-box-title">Recomendação</div>
+      <p>Recomenda-se consulta com psicólogo clínico ou psiquiatra. A TAG responde bem à terapia cognitivo-comportamental (TCC), técnicas de regulação emocional e, quando indicado, à farmacoterapia (SSRIs, SNRIs).</p>
+    </div>` : `
+    <div class="info-box">
+      <div class="info-box-title">Nota</div>
+      <p>Mesmo sem critérios de TAG, se a ansiedade limitar a sua vida de alguma forma, pode ser útil falar com um profissional de saúde mental.</p>
+    </div>`}`;
+  }
+
+  app.innerHTML = `
+  <div class="card">
+    <div class="result-tabs">
+      <button class="tab-btn ${activeTab==='dep'?'active':''}" onclick="switchTab('dep')">Depressão</button>
+      <button class="tab-btn ${activeTab==='anx'?'active':''}" onclick="switchTab('anx')">Ansiedade</button>
+    </div>
+    <div id="tab-dep" class="tab-panel ${activeTab==='dep'?'show':''}">${depPanel()}</div>
+    <div id="tab-anx" class="tab-panel ${activeTab==='anx'?'show':''}">${anxPanel()}</div>
+    <div class="restart-row">
+      <button class="btn" onclick="restart()">← Repetir questionário</button>
+    </div>
+    <p class="disclaimer">
+      Este questionário tem fins informativos e de rastreio. Não constitui um diagnóstico clínico.
+      Apenas um profissional de saúde mental qualificado pode estabelecer um diagnóstico formal.
+      Se estiver em sofrimento, procure ajuda profissional.
+    </p>
+  </div>`;
 }
 
-function start()    { current = 0; render(); }
-function back()     { if (current > 0) { current--; render(); } }
-function select(i)  { answers[questions[current].id] = i; render(); }
-function next()     { if (answers[questions[current].id] === undefined) return; current++; render(); }
-function restart()  { answers = {}; current = -1; render(); }
+// ── Controls
+function switchTab(t) { activeTab = t; renderResult(document.getElementById('app')); }
+function startQuiz()  { current = 0; render(); }
+function goBack()     { if (current > 0) { current--; render(); } }
+function selectOption(i) { answers[Q[current].id] = i; render(); }
+function goNext() {
+  if (answers[Q[current].id] === undefined) return;
+  current++;
+  render();
+}
+function restart() { answers = {}; current = -1; render(); }
 
 render();
 </script>
