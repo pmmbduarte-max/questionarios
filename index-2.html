@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastreio Clínico — Pedro Duarte, Psicólogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #faf9f7; --surface: #ffffff; --surface2: #f3f2ef;
+    --text: #1a1917; --text-muted: #6b6a67; --text-hint: #9b9a97;
+    --border: rgba(26,25,23,0.11); --border-mid: rgba(26,25,23,0.22); --accent: #1a1917;
+    --teal-bg: #E1F5EE; --teal-text: #085041; --teal-border: #9FE1CB;
+    --blue-bg: #E6F1FB; --blue-text: #042C53; --blue-border: #B5D4F4;
+    --purple-bg: #EEEDFE; --purple-text: #26215C; --purple-border: #AFA9EC;
+    --radius: 10px; --radius-lg: 16px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110; --surface: #1c1c1a; --surface2: #252523;
+      --text: #f0ede8; --text-muted: #9b9a97; --text-hint: #6b6a67;
+      --border: rgba(240,237,232,0.1); --border-mid: rgba(240,237,232,0.2); --accent: #f0ede8;
+      --teal-bg: #04342C; --teal-text: #9FE1CB; --teal-border: #0F6E56;
+      --blue-bg: #042C53; --blue-text: #B5D4F4; --blue-border: #185FA5;
+      --purple-bg: #26215C; --purple-text: #CECBF6; --purple-border: #534AB7;
+    }
+  }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 3rem 1rem 5rem; }
+  .container { width: 100%; max-width: 720px; }
+  .site-header { text-align: center; margin-bottom: 3.5rem; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 12px; }
+  .site-header h1 { font-family: 'Lora', serif; font-size: 30px; font-weight: 400; line-height: 1.3; margin-bottom: 10px; }
+  .site-header p { font-size: 15px; color: var(--text-muted); line-height: 1.7; max-width: 500px; margin: 0 auto; }
+  .divider { width: 40px; height: 1px; background: var(--border-mid); margin: 1.5rem auto; }
+  .section-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 1rem; padding-left: 2px; }
+  .card-group { margin-bottom: 2.5rem; }
+  .cards-stack { display: flex; flex-direction: column; gap: 12px; }
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: 1.5rem; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+  .q-card:hover { border-color: var(--border-mid); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+  .card-icon { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .icon-dep  { background: var(--blue-bg);   border-color: var(--blue-border); }
+  .icon-anx  { background: var(--teal-bg);   border-color: var(--teal-border); }
+  .icon-both { background: var(--surface2);  border-color: var(--border); }
+  .icon-poc  { background: var(--purple-bg); border-color: var(--purple-border); }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title { font-size: 15px; font-weight: 500; margin-bottom: 3px; line-height: 1.3; }
+  .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+  .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  .card-pills { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+  .mini-pill { font-size: 11px; padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-hint); white-space: nowrap; }
+  .mini-pill.dep { background: var(--blue-bg);   color: var(--blue-text);   border-color: var(--blue-border); }
+  .mini-pill.anx { background: var(--teal-bg);   color: var(--teal-text);   border-color: var(--teal-border); }
+  .mini-pill.poc { background: var(--purple-bg); color: var(--purple-text); border-color: var(--purple-border); }
+  .card-arrow { font-size: 16px; color: var(--text-hint); transition: transform 0.2s; }
+  .q-card:hover .card-arrow { transform: translateX(4px); }
+  .site-footer { text-align: center; border-top: 1px solid var(--border); padding-top: 2rem; width: 100%; max-width: 720px; }
+  .site-footer .author { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+  .site-footer p { font-size: 12px; color: var(--text-hint); line-height: 1.7; font-style: italic; }
+  @media (max-width: 540px) {
+    body { padding: 2rem 0.75rem 4rem; }
+    .site-header h1 { font-size: 24px; }
+    .q-card { flex-wrap: wrap; gap: 1rem; }
+    .card-right { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="site-header">
+    <p class="eyebrow">Pedro Duarte · Psicólogo</p>
+    <h1>Questionários de Rastreio Clínico</h1>
+    <div class="divider"></div>
+    <p>Instrumentos de rastreio baseados nos critérios diagnósticos do <em>DSM-5</em>. Selecione o questionário adequado ao seu pedido de ajuda.</p>
+  </header>
+
+  <div class="card-group">
+    <p class="section-label">Questionários individuais</p>
+    <div class="cards-stack">
+
+      <a class="q-card" href="depressao.html">
+        <div class="card-icon icon-dep">🌧</div>
+        <div class="card-body">
+          <div class="card-title">Rastreio de Depressão</div>
+          <div class="card-desc">Perturbação Depressiva Major — avaliação dos 9 sintomas do DSM-5 com grau de severidade</div>
+        </div>
+        <div class="card-right">
+          <div class="card-pills">
+            <span class="mini-pill dep">Depressão</span>
+            <span class="mini-pill">11 perguntas</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="q-card" href="ansiedade.html">
+        <div class="card-icon icon-anx">🌀</div>
+        <div class="card-body">
+          <div class="card-title">Rastreio de Ansiedade</div>
+          <div class="card-desc">Perturbação de Ansiedade Generalizada (TAG) — critérios A, B, C e D do DSM-5 com grau de severidade</div>
+        </div>
+        <div class="card-right">
+          <div class="card-pills">
+            <span class="mini-pill anx">Ansiedade</span>
+            <span class="mini-pill">11 perguntas</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a class="q-card" href="poc.html">
+        <div class="card-icon icon-poc">🔁</div>
+        <div class="card-body">
+          <div class="card-title">Rastreio de Perturbação Obsessivo-Compulsiva</div>
+          <div class="card-desc">Obsessões, compulsões, impacto funcional e grau de insight — critérios DSM-5</div>
+        </div>
+        <div class="card-right">
+          <div class="card-pills">
+            <span class="mini-pill poc">POC</span>
+            <span class="mini-pill">9 perguntas</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="card-group">
+    <p class="section-label">Rastreio combinado</p>
+    <div class="cards-stack">
+
+      <a class="q-card" href="ansiedade-depressao.html">
+        <div class="card-icon icon-both">📋</div>
+        <div class="card-body">
+          <div class="card-title">Rastreio de Ansiedade e Depressão</div>
+          <div class="card-desc">Avaliação conjunta num único questionário, com resultado separado para cada perturbação</div>
+        </div>
+        <div class="card-right">
+          <div class="card-pills">
+            <span class="mini-pill dep">Depressão</span>
+            <span class="mini-pill anx">Ansiedade</span>
+            <span class="mini-pill">21 perguntas</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <p class="author">Pedro Duarte · Psicólogo</p>
+  <p>Estes questionários têm fins informativos e de rastreio clínico. Não constituem um diagnóstico.<br>Apenas um profissional de saúde mental qualificado pode estabelecer um diagnóstico formal.</p>
+</footer>
+</body>
+</html>

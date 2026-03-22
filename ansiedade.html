@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rastreio de Ansiedade — Pedro Duarte, Psicólogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #faf9f7; --surface: #ffffff; --surface2: #f3f2ef;
+    --text: #1a1917; --text-muted: #6b6a67; --text-hint: #9b9a97;
+    --border: rgba(26,25,23,0.11); --border-mid: rgba(26,25,23,0.22);
+    --accent: #1a1917; --green: #3B6D11; --amber: #854F0B; --red: #A32D2D;
+    --teal-bg: #E1F5EE; --teal-text: #085041; --teal-border: #9FE1CB;
+    --radius: 10px; --radius-lg: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110; --surface: #1c1c1a; --surface2: #252523;
+      --text: #f0ede8; --text-muted: #9b9a97; --text-hint: #6b6a67;
+      --border: rgba(240,237,232,0.1); --border-mid: rgba(240,237,232,0.2);
+      --accent: #f0ede8; --green: #97C459; --amber: #EF9F27; --red: #E24B4A;
+      --teal-bg: #04342C; --teal-text: #9FE1CB; --teal-border: #0F6E56;
+    }
+  }
+  html { font-size: 16px; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 5rem; }
+  .container { width: 100%; max-width: 640px; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-hint); text-decoration: none; margin-bottom: 1.5rem; transition: color 0.15s; }
+  .back-link:hover { color: var(--text-muted); }
+  .site-header { text-align: center; margin-bottom: 2.75rem; }
+  .site-header .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 10px; }
+  .site-header h1 { font-family: 'Lora', serif; font-size: 26px; font-weight: 400; line-height: 1.3; margin-bottom: 8px; }
+  .site-header p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+  .progress-wrap { margin-bottom: 1.5rem; display: none; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-hint); margin-bottom: 7px; }
+  .progress-track { height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem 2rem 1.5rem; animation: slideUp 0.35s cubic-bezier(0.4,0,0.2,1); }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .badge { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--teal-border); background: var(--teal-bg); color: var(--teal-text); margin-bottom: 1.1rem; }
+  .question-text { font-family: 'Lora', serif; font-size: 18px; font-weight: 400; line-height: 1.65; margin-bottom: 0.6rem; }
+  .question-hint { font-size: 13px; color: var(--text-muted); font-style: italic; line-height: 1.6; margin-bottom: 1.35rem; }
+  .options { display: flex; flex-direction: column; gap: 7px; margin-bottom: 1.5rem; }
+  .option { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); text-align: left; width: 100%; line-height: 1.5; transition: border-color 0.15s, background 0.15s; }
+  .option:hover { border-color: var(--border-mid); background: var(--surface2); }
+  .option.selected { border-color: var(--accent); background: var(--surface2); }
+  .radio-dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border-mid); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .option.selected .radio-dot { border-color: var(--accent); background: var(--accent); }
+  .radio-inner { width: 6px; height: 6px; border-radius: 50%; background: var(--bg); opacity: 0; transition: opacity 0.15s; }
+  .option.selected .radio-inner { opacity: 1; }
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 10px 20px; border-radius: var(--radius); border: 1px solid var(--border-mid); background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: background 0.15s, transform 0.1s; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { background: var(--surface2); }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); margin-left: auto; }
+  .btn.primary:hover { opacity: 0.83; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .intro { text-align: center; padding: 0.25rem 0 1rem; }
+  .intro p { font-size: 14px; color: var(--text-muted); line-height: 1.75; max-width: 480px; margin: 0 auto 1.5rem; }
+  .pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  .pill { font-size: 12px; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); }
+  .pill.anx { background: var(--teal-bg); color: var(--teal-text); border-color: var(--teal-border); }
+  .disclaimer-sm { font-size: 11.5px; color: var(--text-hint); margin-top: 1.25rem; line-height: 1.65; font-style: italic; }
+  .result-hero { text-align: center; padding: 1.25rem 1rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
+  .result-eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hint); margin-bottom: 8px; }
+  .result-title { font-family: 'Lora', serif; font-size: 19px; font-weight: 400; margin-bottom: 7px; line-height: 1.4; }
+  .result-sub { font-size: 13px; color: var(--text-muted); line-height: 1.65; max-width: 420px; margin: 0 auto; }
+  .sev-wrap { margin: 1rem 0 1.25rem; }
+  .sev-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 7px; }
+  .sev-track { height: 6px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+  .sev-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .sev-none .sev-fill { background: #888780; }
+  .sev-mild .sev-fill { background: #639922; }
+  .sev-mod .sev-fill  { background: #BA7517; }
+  .sev-sev .sev-fill  { background: #A32D2D; }
+  .criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.25rem; }
+  .crit-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 13px; }
+  .crit-name { font-size: 11px; color: var(--text-hint); margin-bottom: 4px; line-height: 1.4; }
+  .crit-val { font-size: 13px; font-weight: 500; }
+  .c-met { color: var(--green); } .c-none { color: var(--text-hint); } .c-part { color: var(--amber); }
+  .info-box { border: 1px solid var(--border); border-radius: var(--radius); padding: 13px 15px; margin-bottom: 10px; background: var(--surface); }
+  .info-box-title { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+  .info-box p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .disclaimer { font-size: 11.5px; color: var(--text-hint); border-top: 1px solid var(--border); padding-top: 1.25rem; margin-top: 1.5rem; line-height: 1.7; font-style: italic; text-align: center; }
+  .restart-row { display: flex; justify-content: center; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+  @media (max-width: 500px) { .card { padding: 1.5rem 1.25rem 1.25rem; } .question-text { font-size: 16px; } .criteria-grid { grid-template-columns: 1fr; } body { padding: 1.5rem 0.75rem 4rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="index.html">← Voltar aos questionários</a>
+
+  <header class="site-header">
+    <p class="eyebrow">Pedro Duarte · Psicólogo · Rastreio Clínico</p>
+    <h1>Rastreio de Ansiedade</h1>
+    <p>Baseado nos critérios diagnósticos do <em>DSM-5</em><br>Perturbação de Ansiedade Generalizada</p>
+  </header>
+
+  <div class="progress-wrap" id="prog-wrap">
+    <div class="progress-meta"><span id="prog-sec"></span><span id="prog-ct"></span></div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script>
+const Q = [
+  {id:"duration", sec:"Informação geral", text:"Há quanto tempo sente os sintomas que vai descrever?", hint:"Considere os sintomas mais persistentes, não episódios pontuais.", opts:["Menos de 1 mês","Entre 1 e 3 meses","Entre 3 e 6 meses","Mais de 6 meses"]},
+  {id:"anx_worry", sec:"Critério A", text:"Nas últimas semanas, sentiu-se nervoso(a), ansioso(a) ou com preocupações excessivas e difíceis de controlar?", hint:"A preocupação excessiva e difícil de controlar é o critério central da Perturbação de Ansiedade Generalizada (TAG).", opts:["Nunca","Vários dias","Mais de metade dos dias","Quase todos os dias"]},
+  {id:"anx_control", sec:"Critério A", text:"Quando tem preocupações, consegue controlá-las ou pará-las?", hint:null, opts:["Sim, facilmente","Com algum esforço","Com muita dificuldade","Não consigo controlá-las"]},
+  {id:"anx_restless", sec:"Critério B", text:"Sente-se frequentemente inquieto(a), tenso(a) ou 'em alerta'?", hint:null, opts:["Não","Raramente","Frequentemente","Quase sempre"]},
+  {id:"anx_fatigue", sec:"Critério B", text:"Cansa-se facilmente como consequência da ansiedade ou tensão?", hint:null, opts:["Não","Raramente","Frequentemente","Quase sempre"]},
+  {id:"anx_concentration", sec:"Critério B", text:"A ansiedade dificulta a sua concentração ou faz-lhe a mente ficar em branco?", hint:null, opts:["Não","Raramente","Frequentemente","Quase sempre"]},
+  {id:"anx_irritability", sec:"Critério B", text:"Sente-se irritável com mais frequência do que o habitual?", hint:null, opts:["Não","Raramente","Frequentemente","Quase sempre"]},
+  {id:"anx_muscle", sec:"Critério B", text:"Tem tensão muscular, dores de cabeça tensionais ou outros sintomas físicos de tensão persistente?", hint:null, opts:["Não","Raramente","Frequentemente","Quase sempre"]},
+  {id:"anx_sleep", sec:"Critério B", text:"Tem dificuldade em adormecer ou em manter o sono por causa de preocupações?", hint:null, opts:["Não","Raramente","Frequentemente","Quase sempre"]},
+  {id:"anx_impact", sec:"Critério C", text:"Estes sintomas de ansiedade interferem na sua vida profissional, social ou pessoal?", hint:null, opts:["Não interferem","Interferência ligeira","Interferência moderada","Interferência grave em várias áreas"]},
+  {id:"anx_duration", sec:"Critério C", text:"Há quanto tempo tem estas preocupações e sintomas de ansiedade de forma persistente?", hint:"O DSM-5 exige pelo menos 6 meses de sintomas para diagnóstico de TAG.", opts:["Menos de 1 mês","Entre 1 e 3 meses","Entre 3 e 6 meses","Mais de 6 meses"]},
+];
+
+let answers = {}, current = -1;
+
+function score() {
+  return ["anx_worry","anx_control","anx_restless","anx_fatigue","anx_concentration","anx_irritability","anx_muscle","anx_sleep"]
+    .reduce((s, k) => s + (answers[k] || 0), 0);
+}
+
+function sev(s) {
+  if (s <= 4)  return { label:"Sem indicação clínica", cls:"sev-none", pct:4 };
+  if (s <= 9)  return { label:"Leve",                  cls:"sev-mild", pct:28 };
+  if (s <= 14) return { label:"Moderada",              cls:"sev-mod",  pct:62 };
+  return               { label:"Severa",               cls:"sev-sev",  pct:92 };
+}
+
+function criteria() {
+  const worryMet    = (answers.anx_worry   || 0) >= 2;
+  const controlHard = (answers.anx_control || 0) >= 2;
+  const symCount = ["anx_restless","anx_fatigue","anx_concentration","anx_irritability","anx_muscle","anx_sleep"]
+    .filter(k => (answers[k] || 0) >= 2).length;
+  const impact      = (answers.anx_impact   || 0) >= 2;
+  const longEnough  = (answers.anx_duration || 0) >= 3;
+  return { worryMet, controlHard, symCount, impact, longEnough,
+    fullDSM: worryMet && controlHard && symCount >= 3 && impact && longEnough,
+    partial: worryMet && symCount >= 2 && impact
+  };
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const pw  = document.getElementById('prog-wrap');
+  if (current === -1)          { pw.style.display = 'none';  renderIntro(app); }
+  else if (current >= Q.length){ pw.style.display = 'block'; renderResult(app); }
+  else                         { pw.style.display = 'block'; renderQuestion(app); }
+}
+
+function renderIntro(app) {
+  app.innerHTML = `
+  <div class="card">
+    <div class="intro">
+      <p>Este questionário avalia a presença e severidade de sintomas de ansiedade de acordo com os critérios clínicos do <em>DSM-5</em> para Perturbação de Ansiedade Generalizada.</p>
+      <div class="pills">
+        <span class="pill anx">Ansiedade Generalizada</span>
+        <span class="pill">11 perguntas</span>
+        <span class="pill">~3 minutos</span>
+      </div>
+      <button class="btn primary" onclick="startQuiz()">Iniciar questionário →</button>
+      <p class="disclaimer-sm">As suas respostas não são guardadas nem partilhadas.<br>Este questionário não substitui avaliação por profissional de saúde mental.</p>
+    </div>
+  </div>`;
+}
+
+function renderQuestion(app) {
+  const q   = Q[current];
+  const sel = answers[q.id] !== undefined ? answers[q.id] : -1;
+  const pct = (current / Q.length * 100).toFixed(0);
+  document.getElementById('prog-sec').textContent  = q.sec;
+  document.getElementById('prog-ct').textContent   = (current + 1) + ' / ' + Q.length;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  app.innerHTML = `
+  <div class="card">
+    <span class="badge">Ansiedade</span>
+    <p class="question-text">${q.text}</p>
+    ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
+    <div class="options">
+      ${q.opts.map((o, i) => `
+        <button class="option ${sel === i ? 'selected' : ''}" onclick="pick(${i})">
+          <div class="radio-dot"><div class="radio-inner"></div></div>
+          <span>${o}</span>
+        </button>`).join('')}
+    </div>
+    <div class="nav">
+      ${current > 0 ? `<button class="btn" onclick="goBack()">← Anterior</button>` : ''}
+      <button class="btn primary" onclick="goNext()" ${sel === -1 ? 'disabled' : ''}>
+        ${current === Q.length - 1 ? 'Ver resultado →' : 'Seguinte →'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderResult(app) {
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-sec').textContent  = 'Resultado';
+  document.getElementById('prog-ct').textContent   = 'Concluído';
+  const s  = score();
+  const sv = sev(s);
+  const ac = criteria();
+  const res = ac.fullDSM
+    ? { title:"Perfil consistente com Ansiedade Generalizada", sub:"As suas respostas são consistentes com os critérios do DSM-5 para Perturbação de Ansiedade Generalizada (TAG)." }
+    : ac.partial
+    ? { title:"Sintomas de ansiedade clinicamente relevantes", sub:"Existem sintomas ansiosos significativos, mas os critérios completos para TAG não foram totalmente atingidos." }
+    : { title:"Sem indicação de Ansiedade Generalizada", sub:"As suas respostas não sugerem a presença de critérios clínicos para Perturbação de Ansiedade Generalizada." };
+
+  app.innerHTML = `
+  <div class="card">
+    <div class="result-hero">
+      <p class="result-eyebrow">Ansiedade Generalizada — DSM-5</p>
+      <p class="result-title">${res.title}</p>
+      <p class="result-sub">${res.sub}</p>
+    </div>
+    <div class="sev-wrap ${sv.cls}">
+      <div class="sev-meta"><span>Severidade estimada</span><span>${sv.label}</span></div>
+      <div class="sev-track"><div class="sev-fill" style="width:${sv.pct}%"></div></div>
+    </div>
+    <div class="criteria-grid">
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Preocupação excessiva</div>
+        <div class="crit-val ${ac.worryMet?'c-met':'c-none'}">${ac.worryMet?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério A — Difícil de controlar</div>
+        <div class="crit-val ${ac.controlHard?'c-met':'c-none'}">${ac.controlHard?'Presente':'Não identificado'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Sintomas B (mín. 3 para diagnóstico)</div>
+        <div class="crit-val ${ac.symCount>=3?'c-met':ac.symCount>=2?'c-part':'c-none'}">${ac.symCount} de 6 sintomas</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério C — Duração ≥ 6 meses</div>
+        <div class="crit-val ${ac.longEnough?'c-met':'c-part'}">${ac.longEnough?'Cumprido':'Não cumprido ainda'}</div>
+      </div>
+      <div class="crit-card">
+        <div class="crit-name">Critério D — Impacto funcional</div>
+        <div class="crit-val ${ac.impact?'c-met':'c-none'}">${ac.impact?'Presente':'Não atingido'}</div>
+      </div>
+    </div>
+    ${ac.fullDSM || ac.partial ? `
+    <div class="info-box">
+      <div class="info-box-title">Recomendação</div>
+      <p>Recomenda-se consulta com psicólogo clínico ou psiquiatra. A TAG responde bem à terapia cognitivo-comportamental (TCC), técnicas de regulação emocional e, quando indicado, à farmacoterapia (SSRIs, SNRIs).</p>
+    </div>` : `
+    <div class="info-box">
+      <div class="info-box-title">Nota</div>
+      <p>Mesmo sem critérios de TAG, se a ansiedade limitar a sua vida de alguma forma, pode ser útil falar com um profissional de saúde mental.</p>
+    </div>`}
+    <div class="restart-row">
+      <button class="btn" onclick="restart()">← Repetir</button>
+      <a href="index.html" class="btn">Ver outros questionários</a>
+    </div>
+    <p class="disclaimer">Este questionário tem fins informativos e de rastreio. Não constitui um diagnóstico clínico. Apenas um profissional de saúde mental qualificado pode estabelecer um diagnóstico formal. Se estiver em sofrimento, procure ajuda profissional.</p>
+  </div>`;
+}
+
+function startQuiz() { current = 0; render(); }
+function goBack()    { if (current > 0) { current--; render(); } }
+function pick(i)     { answers[Q[current].id] = i; render(); }
+function goNext()    { if (answers[Q[current].id] === undefined) return; current++; render(); }
+function restart()   { answers = {}; current = -1; render(); }
+render();
+</script>
+</body>
+</html>
